@@ -1,12 +1,13 @@
 import { Message } from "./types"
 import { socket } from "../../services/chat-service"
 import { useEffect, useState } from "react"
+import ChatBubble from "./ChatBubble"
 
 function parseMessage(msg:any):Message {
     let output:Message = {
         author:'anon',
         content:msg,
-        date:new Date(),
+        timestamp:'00:12',
     }
 
     return output
@@ -29,9 +30,7 @@ export default function ChatMessages() {
             {
                 messages.map((message, index) => {
                     return (
-                        <div>
-                            {message.content}
-                        </div>
+                        <ChatBubble content={message.content} author={message.author} timestamp={message.timestamp} status={""} isSelf={index%2==0}/>
                     )
                 })
             }
