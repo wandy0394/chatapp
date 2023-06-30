@@ -12,9 +12,16 @@ const io = new SocketServer(httpServer, {
 })
 
 io.on("connection", (socket)=>{
-    console.log('connected')
-    socket.send(`hello ${socket.id}`)
+    console.log(`connected with ${socket.id}`)
+    // socket.send(`hello ${socket.id}`)
+
+    socket.on("message", (message)=>{
+        console.log(`Received message: ${message}`)
+        io.emit("message", message)
+    })
 })
+
+
 
 app.get('/', (req:Request, res:Response)=>{
     res.send('hello')

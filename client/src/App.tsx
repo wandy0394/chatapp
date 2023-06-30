@@ -1,3 +1,4 @@
+import ChatInput from "./features/ChatInput/ChatInput";
 import ChatMessages from "./features/ChatMessages/ChatMessages";
 
 export default function App() {
@@ -6,8 +7,9 @@ export default function App() {
       <div className='h-full w-full border border-blue-500'>
         List
       </div>
-      <div className='h-full w-full border border-red-500'>
+      <div className='h-full w-full border border-red-500 grid grid-rows-[5fr_1fr]'>
         <ChatMessages/>
+        <ChatInput/>
       </div>
       <div className='h-full w-full border border-green-500 hidden lg:block'>
         Other
