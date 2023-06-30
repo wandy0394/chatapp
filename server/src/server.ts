@@ -6,12 +6,14 @@ import {createServer} from "http"
 const app:Express = express()
 const httpServer = createServer(app)
 const io = new SocketServer(httpServer, {
-
+    cors: {
+        origin:"http://localhost:5173"
+    }
 })
 
 io.on("connection", (socket)=>{
     console.log('connected')
-    socket.send("hello")
+    socket.send(`hello ${socket.id}`)
 })
 
 app.get('/', (req:Request, res:Response)=>{
