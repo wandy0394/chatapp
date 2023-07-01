@@ -1,5 +1,8 @@
+import { User } from "../Authentication/AuthContext"
+
 export type Message = {
-    author:string,
+    author:User,
+
     content:string,
     timestamp:string
 }

@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express'
 import { Server as SocketServer} from "socket.io"
 import {createServer} from "http"
+import { Message } from './types/message'
 
 
 const app:Express = express()
@@ -18,9 +19,24 @@ io.on("connection", (socket)=>{
     console.log(`connected with ${socket.id}`)
     // socket.send(`hello ${socket.id}`)
 
-    socket.on("message", (message)=>{
-        console.log(`Received message: ${message}`)
+    socket.on("message", (message:Message)=>{
+        console.log(`Received message: ${message.content}`)
         io.emit("message", message)
+    })
+
+    socket.on("create-room", (room)=>{
+
+    })
+
+    socket.on("change-room", (room)=>{
+        
+    })
+
+    socket.on("join-room", (room, id)=>{
+        
+    })
+    socket.on("leave-room", (room, id)=>{
+        
     })
 })
 
