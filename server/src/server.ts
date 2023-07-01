@@ -4,6 +4,12 @@ import {createServer} from "http"
 import { Message } from './types/message'
 import userRouter from './v1/routes/users.routes'
 import cors from 'cors'
+import helmet from 'helmet'
+import sessions from 'express-session'
+import dotenv from 'dotenv'
+
+dotenv.config()
+
 
 const app:Express = express()
 const httpServer = createServer(app)
@@ -57,7 +63,18 @@ app.use(cors({
     credentials:true,    //allow HTTP cookies and credentials from the client
 }))
 app.use(express.json())
-
+app.use(helmet())
+app.use(sessions({
+    secret:process.env.SESSION_SECRET as string,
+    resave:false,
+    saveUninitialized:false,
+    cookie: {
+        maxAge: 1000*60*60*24*3,
+        sameSite: process.env.NODE_ENV === 'production'?'none':'lax',
+        httpOnly:true,
+        secure: process.env.NODE_ENV === 'production'
+    }
+}))
 app.use('/api/v1/users', userRouter)
 
 app.use("*", (req:Request, res:Response) => {
