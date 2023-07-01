@@ -1,15 +1,17 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
+import { useEffect } from "react";
 
 
 
 export default function RequireAuth() {
     const {user, finishedLoading} = useAuthContext();
-    const location = useLocation();
+    const navigate = useNavigate()
 
-    if (!user) {
-        return <Navigate to ='/login' state={{from:location}}/>
-    }
-
+    useEffect(()=>{
+        if (!user && finishedLoading) {
+            navigate('/login')
+        }
+    }, [user, finishedLoading])
     return <Outlet/>
 }

@@ -54,7 +54,7 @@ export const AuthContextProvider  = ({children}:any) => {
         try {
             const result = await Authenticator.getSession() //TODO
 
-            dispatch({type:ACTION_TYPES.LOGIN, payload:{user:result}})
+            dispatch({type:ACTION_TYPES.LOGIN, payload:{...result}})
         }
         catch (error) {
             dispatch({type:ACTION_TYPES.FINISHED_LOADING, payload:null})
@@ -64,7 +64,7 @@ export const AuthContextProvider  = ({children}:any) => {
     let called = false
     useEffect(()=>{
         if (!called) {
-            // getSession()
+            getSession()
         }
         return ()=>{
             called = true

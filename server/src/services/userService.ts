@@ -8,6 +8,7 @@ class UserService {
 
     static injectConn(connection:Connection) {
         UsersDAO.initDb(connection)
+        SessionsDAO.initDb(connection)
     }
     
     static connectionCheck() {
@@ -61,9 +62,9 @@ class UserService {
         }
     }
 
-    static async addSession(sid:string, userEmail:string, userId:number):Promise<boolean> {
+    static async addSession(sid:string, userEmail:string, userUUID:string, userId:number):Promise<boolean> {
         try {
-            const result = await SessionsDAO.addSession(sid, userEmail, userId)
+            const result = await SessionsDAO.addSession(sid, userEmail, userUUID, userId)
             return result
         }
         catch(e) {

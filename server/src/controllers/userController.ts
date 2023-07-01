@@ -1,7 +1,7 @@
 import {Request, Response, NextFunction, CookieOptions} from 'express'
 import {v4 as uuidv4} from 'uuid'
 import UserService from '../services/userService'
-// import parseCookieHeader from '../util/parseCookieHeader'
+import parseCookieHeader from '../util/parseCookieHeader'
 
 class UserController {
 
@@ -68,11 +68,17 @@ class UserController {
         }
         try {
             const user = await UserService.login(email, password)
-            // await UserService.addSession(req.sessionID, user.email, user.id)
-
+            console.log(user)
+            console.log(user.email, req.sessionID)
+            await UserService.addSession(req.sessionID, user.email, user.userUUID, user.id)
+            let userData = {
+                username:user.username, 
+                email:user.email, 
+                userUUID:user.userUUID
+            }
             res.cookie('user', JSON.stringify({name:user.username}), UserController.userCookieParams)
-            // res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
-            res.status(200).send({status:'ok', data:{user:{username:user.username, email:user.email, userUUID:user.userUUID}}})
+            res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:userData}})
+            // res.status(200).send({status:'ok', data:{user:userData}})
         }
         catch(error:any) {
             if (error instanceof Error) {
@@ -120,21 +126,26 @@ class UserController {
     }
 
     static async getUserBySession(req:Request, res:Response, next:NextFunction) {
-        // const cookies = parseCookieHeader(req.headers?.cookie)
-        // if (!cookies.sid) {
-        //     res.status(403).send({status:'error', data:{error:'Unauthorised.'}})
-        //     return
-        // }
-        // try {
-        //     const session = await UserService.getSessionBySessionId(cookies.sid)
-        //     const user = await (UserService.getUser(session.userEmail))
-        //     res.status(200).send({status:'ok', data:{user:{email:user.email, name:user.name}}})
+        const cookies = parseCookieHeader(req.headers?.cookie)
+        if (!cookies.sid) {
+            res.status(403).send({status:'error', data:{error:'Unauthorised.'}})
+            return
+        }
+        try {
+            const session = await UserService.getSessionBySessionId(cookies.sid)
+            const user = await (UserService.getUser(session.email))
+            let userData = {
+                username:user.username, 
+                email:user.email, 
+                userUUID:user.userUUID
+            }
+            res.status(200).send({status:'ok', data:{user:userData}})
             
-        // }
-        // catch (e) {
-        //     res.status(403).send({status:'error', data:{error:'Unauthorised.'}})
-        //     return
-        // }
+        }
+        catch (e) {
+            res.status(403).send({status:'error', data:{error:'Unauthorised.'}})
+            return
+        }
     }
 }
 

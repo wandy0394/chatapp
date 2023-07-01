@@ -10,14 +10,15 @@ class SessionsDAO {
         if (db === undefined) db = newDb
     }
 
-    static async addSession(sid:string, userEmail:string, userId:number):Promise<boolean> {
-        if (!sid || !userEmail || !userId) throw Error('Missing parameters sid, userEmail or userId')
+    static async addSession(sid:string, email:string, userUUID:string, userId:number):Promise<boolean> {
+        if (!sid || !email || !userId || !userUUID) throw Error('Missing parameters sid, email, userUUID or userId')
         const promise:Promise<boolean> = new Promise((resolve, reject)=>{
             try {
                 const values={
-                    SessionId:sid,
-                    UserEmail:userEmail,
-                    UserId:userId
+                    sessionId:sid,
+                    email:email,
+                    userUUID:userUUID,
+                    userId:userId
                 }
 
                 const sqlQuery:string = `INSERT INTO Sessions set ?`
@@ -81,8 +82,8 @@ class SessionsDAO {
                         if (rows.length <= 0) return reject(new Error('No session with sessionid'))
                         resolve({
                             id:rows[0].id,
-                            sessionId:rows[0].SessionID,
-                            email:rows[0].UserEmail,
+                            sessionId:rows[0].sessionID,
+                            email:rows[0].email,
                             userUUID:rows[0].UserUUID
                         })
                     }

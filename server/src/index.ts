@@ -17,6 +17,7 @@ connection.connect((err)=>{
     }
     // LibraryService.injectConn(connection)
     UserService.injectConn(connection)
+    
     UserService.connectionCheck()
     // LibraryService.connectionCheck()
 })
