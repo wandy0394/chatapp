@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react"
 import { socket } from "../../services/chat-service"
-import { useAuthContext } from "../Authentication/useAuthContext"
+import { useAuthContext } from "../Authentication/hooks/useAuthContext"
 import { User } from "../Authentication/AuthContext"
 import { Message } from "../ChatMessages/types"
 

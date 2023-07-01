@@ -2,7 +2,7 @@ import { Message } from "./types"
 import { socket } from "../../services/chat-service"
 import { useEffect, useState } from "react"
 import ChatBubble from "./ChatBubble"
-import { useAuthContext } from "../Authentication/useAuthContext"
+import { useAuthContext } from "../Authentication/hooks/useAuthContext"
 
 function parseMessage(msg:Message):Message {
     console.log(msg)
