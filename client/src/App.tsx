@@ -1,7 +1,7 @@
 import ChatInput from "./features/ChatInput/ChatInput";
 import ChatMessages from "./features/ChatMessages/ChatMessages";
 import ContactList from "./features/ContactList/ContactList";
-import RecentChats from "./features/RecentChats/RecentChats";
+import Conversations from "./features/RecentChats/Conversations";
 
 function Header() {
   return (
@@ -25,7 +25,7 @@ export default function App() {
       <Header/>
       <div className='h-full w-full grid md:grid-cols-[1fr_3fr] lg:grid-cols-[1fr_4fr_1fr]'>
         <div className='h-full w-full border border-blue-500 hidden md:grid md:grid-rows-2'>
-          <RecentChats/>
+          <Conversations/>
           <ContactList/>
         </div>
         <div className='h-full w-full border border-red-500 flex flex-col items-center'>

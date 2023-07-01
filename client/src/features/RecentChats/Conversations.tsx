@@ -14,7 +14,7 @@ const DUMMY_CHATS = [
     {uuid:'1', name:'Musicals', members:[]},
 ]
 
-export default function RecentChats() {
+export default function Conversations() {
     const [chats, setChats] = useState<Chat[]>(DUMMY_CHATS)
     const [collapsed, setCollapsed] = useState<boolean>(false)
     return (
@@ -24,7 +24,7 @@ export default function RecentChats() {
                     className='text-2xl font-medium w-full h-10 flex flex-col justify-center hover:cursor-pointer' 
                     onClick={()=>setCollapsed((state)=>!state)}
                 >
-                    Recent Conversations
+                    Conversations
                 </span>
             </div>
             <div className="w-full flex flex-col gap-4 px-4" style={{visibility:collapsed?'hidden':'visible'}}> 
