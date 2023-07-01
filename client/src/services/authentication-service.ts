@@ -84,7 +84,7 @@ export default class Authenticator {
         try {
             const response = await request<ResponseObject<User>>(`${authenticationUrl}/signup`, config)
             if (response.status === RESPONSE_TYPE.OK) {
-                return response
+                return response.data
             }
 
         }

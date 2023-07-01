@@ -10,8 +10,8 @@ type Chat = {
 
 const DUMMY_CHATS = [
     {uuid:'1', name:'Food', members:[]},
-    {uuid:'1', name:'Movies', members:[]},
-    {uuid:'1', name:'Musicals', members:[]},
+    {uuid:'2', name:'Movies', members:[]},
+    {uuid:'3', name:'Musicals', members:[]},
 ]
 
 export default function Conversations() {

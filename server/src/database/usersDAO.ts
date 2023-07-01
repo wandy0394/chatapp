@@ -35,7 +35,7 @@ class UsersDAO {
         //if (!validator.isStrongPassword(password)) throw Error ('Password not strong enough.')    
         const salt = await bcrypt.genSalt(10)
         const hash = await bcrypt.hash(password, salt)  //move this to service layer
-        let userUUID = uuidv4()
+        const userUUID = uuidv4()
         const promise:Promise<User> = new Promise((resolve, reject)=>{
             try {
                 const values={
@@ -81,7 +81,7 @@ class UsersDAO {
         }
         const promise:Promise<User> = new Promise((resolve, reject)=>{
             try {
-                const sqlQuery = `SELECT id, username, email, passwordHash from Users where email=? LIMIT 1`
+                const sqlQuery = `SELECT id, username, email, passwordHash, userUUID from Users where email=? LIMIT 1`
                 db.query(sqlQuery, [email], (err, result, fields)=>{
                     if (err) {
                         console.log(err)

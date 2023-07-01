@@ -25,7 +25,12 @@ export default function ChatMessages() {
     }, [])
     return (
         <div className='w-full h-full border border-black p-4 flex flex-col gap-4'>
-            {user && user.userUUID}
+            <span className='flex gap-4'>
+                <h1>Logged in as: </h1>
+                <p>{user && user.username}</p>
+                <p>{user && user.email}</p>
+                <p>{user && user.userUUID}</p>
+            </span>
             {
                 user &&
                     messages.map((message, index) => {

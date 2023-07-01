@@ -14,7 +14,8 @@ export function useSignup() {
 
         try {
             const response = await Authenticator.register(email, password, name)
-            if (dispatch) dispatch({type:ACTION_TYPES.LOGIN, payload:response})
+            console.log(response)
+            if (dispatch) dispatch({type:ACTION_TYPES.LOGIN, payload:{...response}})
             setIsLoading(false)
         }
         catch (error) {

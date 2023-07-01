@@ -4,7 +4,6 @@ import SessionsDAO from "../database/sessionsDAO"
 import {User} from '../types/user'
 import {Session} from '../types/session'
 import bcrypt from "bcrypt"
-// import SessionsDAO from "../database/sessionsDAO"
 class UserService {
 
     static injectConn(connection:Connection) {
@@ -40,6 +39,7 @@ class UserService {
                 if (!passwordMatched) throw Error('Invalid credentials.')
                 const retUser:User = {...user}
                 retUser.passwordHash=undefined
+                console.log(retUser)
                 return retUser
             }
             else {

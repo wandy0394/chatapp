@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction, CookieOptions} from 'express'
 import {v4 as uuidv4} from 'uuid'
-// import UserService from '../services/userService'
+import UserService from '../services/userService'
 // import parseCookieHeader from '../util/parseCookieHeader'
 
 class UserController {
@@ -35,14 +35,14 @@ class UserController {
             return
         }
         try {
-            // const user = await UserService.signup(email, password, name)
+            const user = await UserService.signup(email, password, name)
             // await UserService.addSession(req.sessionID, user.email, user.id)
-            let user = {
-                name:name
-            }
-            res.cookie('user', JSON.stringify({name:user.name}), UserController.userCookieParams)
+            // let user = {
+            //     name:name
+            // }
+            res.cookie('user', JSON.stringify({name:user.username}), UserController.userCookieParams)
             // res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
-            res.status(200).send({status:'ok', data:{user:{name:user.name}}})
+            res.status(200).send({status:'ok', data:{user:{name:user.username, email:user.email, userUUID:user.userUUID}}})
         }
         catch(error) {
             if (error instanceof Error) {
@@ -67,16 +67,12 @@ class UserController {
             return
         }
         try {
-            // const user = await UserService.login(email, password)
+            const user = await UserService.login(email, password)
             // await UserService.addSession(req.sessionID, user.email, user.id)
-            let user = {
-                name:email,
-                email:email,
-                userUUID: uuidv4()
-            }
-            res.cookie('user', JSON.stringify({name:user.name}), UserController.userCookieParams)
+
+            res.cookie('user', JSON.stringify({name:user.username}), UserController.userCookieParams)
             // res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
-            res.status(200).send({status:'ok', data:{user:{username:user.name, email:user.email, userUUID:user.userUUID}}})
+            res.status(200).send({status:'ok', data:{user:{username:user.username, email:user.email, userUUID:user.userUUID}}})
         }
         catch(error:any) {
             if (error instanceof Error) {

@@ -1,13 +1,12 @@
 type Props = {
-    key?:any
     avatar?:string
     name:string
 }
 
 export default function ContactEntry(props:Props) {
-    const {key, avatar, name} = props
+    const {avatar, name} = props
     return (
-        <div key={key} className='w-full flex items-center gap-4 rounded-full p-2 hover:cursor-pointer hover:bg-base-200'>
+        <div className='w-full flex items-center gap-4 rounded-full p-2 hover:cursor-pointer hover:bg-base-200'>
             {
                 avatar 
                    ? <img className='avatar aspect-square w-10' src={avatar || ''} />

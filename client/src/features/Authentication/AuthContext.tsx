@@ -1,4 +1,5 @@
 import {createContext, useReducer, useEffect} from 'react'
+import Authenticator from '../../services/authentication-service'
 
 export const ACTION_TYPES = {
     LOGIN:'LOGIN',
@@ -51,12 +52,8 @@ export const AuthContextProvider  = ({children}:any) => {
 
     async function getSession() {
         try {
-            // const result = await Authenticator.getSession() //TODO
-            const result = {
-                username:'Dev',
-                email:'dev@dev.com',
-                userUUID:'12346'
-            }
+            const result = await Authenticator.getSession() //TODO
+
             dispatch({type:ACTION_TYPES.LOGIN, payload:{user:result}})
         }
         catch (error) {
@@ -67,7 +64,7 @@ export const AuthContextProvider  = ({children}:any) => {
     let called = false
     useEffect(()=>{
         if (!called) {
-            getSession()
+            // getSession()
         }
         return ()=>{
             called = true
