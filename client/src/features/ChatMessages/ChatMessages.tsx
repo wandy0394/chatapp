@@ -32,7 +32,7 @@ export default function ChatMessages() {
                         return (
                             <ChatBubble 
                                 content={message.content} 
-                                author={message.author.username} 
+                                author={message.author} 
                                 timestamp={message.timestamp} 
                                 status={""} 
                                 isSelf={user.userUUID === message.author.userUUID}

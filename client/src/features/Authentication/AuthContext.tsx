@@ -24,7 +24,7 @@ type Action = {
 
 type ContextType = {
     dispatch: React.Dispatch<Action> | null,
-    user:any
+    user:User|null
     finishedLoading:boolean
 }
 

@@ -1,4 +1,5 @@
 import {Request, Response, NextFunction, CookieOptions} from 'express'
+import {v4 as uuidv4} from 'uuid'
 // import UserService from '../services/userService'
 // import parseCookieHeader from '../util/parseCookieHeader'
 
@@ -40,7 +41,8 @@ class UserController {
                 name:name
             }
             res.cookie('user', JSON.stringify({name:user.name}), UserController.userCookieParams)
-            res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
+            // res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
+            res.status(200).send({status:'ok', data:{user:{name:user.name}}})
         }
         catch(error) {
             if (error instanceof Error) {
@@ -68,10 +70,13 @@ class UserController {
             // const user = await UserService.login(email, password)
             // await UserService.addSession(req.sessionID, user.email, user.id)
             let user = {
-                name:name
+                name:email,
+                email:email,
+                userUUID: uuidv4()
             }
             res.cookie('user', JSON.stringify({name:user.name}), UserController.userCookieParams)
-            res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
+            // res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
+            res.status(200).send({status:'ok', data:{user:{username:user.name, email:user.email, userUUID:user.userUUID}}})
         }
         catch(error:any) {
             if (error instanceof Error) {
@@ -93,7 +98,7 @@ class UserController {
         try {
             // const user = await UserService.getUser(email)
             let user = {
-                name:name,
+                name:email,
                 email:email
             }
             res.status(200).send({status:'ok', data:{user:{email:user.email, name:user.name}}})

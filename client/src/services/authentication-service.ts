@@ -58,6 +58,8 @@ const credentials = "include";
 type User = {
     email:string,
     name:string
+    username?:string
+    userUUID?:string
 }
 
 type ResponseObject<T> = {

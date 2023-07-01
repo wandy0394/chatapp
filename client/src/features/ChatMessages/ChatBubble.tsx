@@ -1,6 +1,8 @@
+import { User } from "../Authentication/AuthContext"
+
 type Props = {
     img?:string
-    author:string
+    author:User
     timestamp:string
     status:string
     content:string
@@ -18,14 +20,14 @@ export default function ChatBubble(props:Props) {
                            ? <img className='avatar' src={img} />
                            : <div className="avatar placeholder">
                                 <div className="bg-neutral-focus text-neutral-content rounded-full w-10">
-                                    <span className="text-3xl">{author.slice(0, 1).toUpperCase()}</span>
+                                    <span className="text-3xl">{author.username.slice(0, 1).toUpperCase()}</span>
                                 </div>
                             </div> 
                     }
                 </div>
             </div>
             <div className={`chat-header flex items-center gap-2`}>
-                {author}
+                {author.username}
                 <time className="text-xs opacity-50">{timestamp}</time>
             </div>
             <div className={`chat-bubble ${isSelf?'bg-primary':'bg-secondary'}`}>{content}</div>
