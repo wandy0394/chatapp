@@ -1,8 +1,9 @@
+import { Contact } from "../features/ContactList/types/types";
 import request, { RESPONSE_TYPE, RequestError } from "./util/request";
 
-const authenticationUrl = (import.meta.env.MODE === 'development')
-                            ?'http://192.168.0.128:8080/api/v1/users'
-                            :'https://app-library-dot-paletto-382422.ts.r.appspot.com/api/v1/users'
+const url = (import.meta.env.MODE === 'development')
+                            ?'http://192.168.0.128:8080/api/v1/users/contacts'
+                            :'https://app-library-dot-paletto-382422.ts.r.appspot.com/api/v1/users/contacts'
 
 const headers = {
     "Accept" : "*",
@@ -22,50 +23,45 @@ type ResponseObject<T> = {
     data:T
 }
 
-export default class Authenticator {
+export default class ContactAgent {
 
-    static async register(email:string, password:string, name:string) {
+    static async addContact(email:string) {
         const config:RequestInit = {
             method:'POST',
             headers:headers,
             credentials:credentials,
             body: JSON.stringify({
                 email:email,
-                password:password,
-                name:name
             })
         }
 
         try {
-            const response = await request<ResponseObject<User>>(`${authenticationUrl}/signup`, config)
+            const response = await request<ResponseObject<User>>(`${url}/addContact`, config)
             if (response.status === RESPONSE_TYPE.OK) {
                 return response.data
             }
-
         }
         catch(error) {
             if (error instanceof RequestError || error instanceof Error) throw (error)
             throw new Error('Unknown Error')  
-        }        
+        }
     }
 
-    static async login(email:string, password:string) {
+    static async removeContact(email:string) {
         const config:RequestInit = {
-            method:'POST',
+            method:'DELETE',
             headers:headers,
             credentials:credentials,
             body: JSON.stringify({
                 email:email,
-                password:password
             })
         }
 
         try {
-            const response = await request<ResponseObject<User>>(`${authenticationUrl}/login`, config)
+            const response = await request<ResponseObject<User>>(`${url}/removeContact`, config)
             if (response.status === RESPONSE_TYPE.OK) {
                 return response.data
             }
-
         }
         catch(error) {
             if (error instanceof RequestError || error instanceof Error) throw (error)
@@ -73,32 +69,14 @@ export default class Authenticator {
         }
     }
 
-    static async logout() {
+    static async getContactList(email?:string) {
         const config:RequestInit = {
             method:'GET',
             headers:headers,
             credentials:credentials,
         }
         try {
-            const response = await request<ResponseObject<string>>(`${authenticationUrl}/logout`, config)
-            if (response.status === RESPONSE_TYPE.OK) {
-                return response
-            }
-        }
-        catch(error) {
-            if (error instanceof RequestError || error instanceof Error) throw (error)
-            throw new Error('Unknown Error')  
-        }     
-    }
-
-    static async getSession() {
-        const config:RequestInit = {
-            method:'GET',
-            headers:headers,
-            credentials:credentials,
-        }
-        try {
-            const response = await request<ResponseObject<User>>(`${authenticationUrl}/session`, config)
+            const response = await request<ResponseObject<Contact[]>>(`${url}/getContactList`, config)
             if (response.status === RESPONSE_TYPE.OK) {
                 return response.data
             }
