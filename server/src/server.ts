@@ -3,6 +3,7 @@ import { Server as SocketServer} from "socket.io"
 import {createServer} from "http"
 import { Message } from './types/message'
 import userRouter from './v1/routes/users.routes'
+import contactListRouter from './v1/routes/contactList.routes'
 import cors from 'cors'
 import helmet from 'helmet'
 import sessions from 'express-session'
@@ -76,6 +77,7 @@ app.use(sessions({
     }
 }))
 app.use('/api/v1/users', userRouter)
+app.use('/api/v1/contactList', contactListRouter)
 
 app.use("*", (req:Request, res:Response) => {
     res.status(404).json({error:'Invalid endpoint url'})

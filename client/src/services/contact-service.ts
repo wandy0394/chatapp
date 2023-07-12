@@ -2,8 +2,8 @@ import { Contact } from "../features/ContactList/types/types";
 import request, { RESPONSE_TYPE, RequestError } from "./util/request";
 
 const url = (import.meta.env.MODE === 'development')
-                            ?'http://192.168.0.128:8080/api/v1/users/contacts'
-                            :'https://app-library-dot-paletto-382422.ts.r.appspot.com/api/v1/users/contacts'
+                            ?'http://192.168.0.128:8080/api/v1/contactList'
+                            :'https://app-library-dot-paletto-382422.ts.r.appspot.com/api/v1/contactList'
 
 const headers = {
     "Accept" : "*",
@@ -25,20 +25,23 @@ type ResponseObject<T> = {
 
 export default class ContactAgent {
 
-    static async addContact(email:string) {
+    static async addContact(addresseeEmail:string) {
         const config:RequestInit = {
             method:'POST',
             headers:headers,
             credentials:credentials,
             body: JSON.stringify({
-                email:email,
+                addresseeEmail:addresseeEmail,
             })
         }
 
         try {
-            const response = await request<ResponseObject<User>>(`${url}/addContact`, config)
+            const response = await request<ResponseObject<User>>(`${url}`, config)
             if (response.status === RESPONSE_TYPE.OK) {
                 return response.data
+            }
+            else if (response.status === RESPONSE_TYPE.ERROR) {
+                console.log('error has been returned')
             }
         }
         catch(error) {
@@ -69,14 +72,14 @@ export default class ContactAgent {
         }
     }
 
-    static async getContactList(email?:string) {
+    static async getContactList() {
         const config:RequestInit = {
             method:'GET',
             headers:headers,
             credentials:credentials,
         }
         try {
-            const response = await request<ResponseObject<Contact[]>>(`${url}/getContactList`, config)
+            const response = await request<ResponseObject<Contact[]>>(`${url}`, config)
             if (response.status === RESPONSE_TYPE.OK) {
                 return response.data
             }

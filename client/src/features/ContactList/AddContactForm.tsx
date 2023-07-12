@@ -1,4 +1,5 @@
 import { useState } from "react"
+import ContactAgent from "../../services/contact-service"
 
 type Props = {
 
@@ -9,6 +10,14 @@ export default function AddContactForm(props:Props) {
     function handleAddContact(e:React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         console.log(email)
+        ContactAgent.addContact(email)
+            .then((response) => {
+                console.log(response)
+                setErrorMessage('')
+            })
+            .catch((response) => {
+                setErrorMessage(response.message)
+            })
     }
 
     return (

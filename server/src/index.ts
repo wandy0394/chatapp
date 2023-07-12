@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import {httpServer} from './server'
 import mysql, {Connection}  from 'mysql2'
 import UserService from './services/userService'
+import ContactListService from './services/contactListService'
 
 dotenv.config()
 
@@ -15,11 +16,9 @@ connection.connect((err)=>{
         console.error('Could not connect to SQL database')
         console.error(err)
     }
-    // LibraryService.injectConn(connection)
     UserService.injectConn(connection)
-    
+    ContactListService.injectConn(connection)
     UserService.connectionCheck()
-    // LibraryService.connectionCheck()
 })
 
 

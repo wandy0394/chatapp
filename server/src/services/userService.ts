@@ -4,6 +4,7 @@ import SessionsDAO from "../database/sessionsDAO"
 import {User} from '../types/user'
 import {Session} from '../types/session'
 import bcrypt from "bcrypt"
+import { UserNotFoundError } from "../exceptions/exceptions"
 class UserService {
 
     static injectConn(connection:Connection) {
@@ -58,6 +59,7 @@ class UserService {
             return result
         }
         catch (e) {
+            console.error(e)
             throw(e)
         }
     }

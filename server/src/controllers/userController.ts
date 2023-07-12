@@ -2,6 +2,7 @@ import {Request, Response, NextFunction, CookieOptions} from 'express'
 import {v4 as uuidv4} from 'uuid'
 import UserService from '../services/userService'
 import parseCookieHeader from '../util/parseCookieHeader'
+import ContacListService from '../services/contactListService'
 
 class UserController {
 
@@ -36,12 +37,14 @@ class UserController {
         }
         try {
             const user = await UserService.signup(email, password, name)
-            // await UserService.addSession(req.sessionID, user.email, user.id)
-            // let user = {
-            //     name:name
-            // }
+            await UserService.addSession(req.sessionID, user.email, user.userUUID, user.id)
+            let userData = {
+                username:user.username, 
+                email:user.email, 
+                userUUID:user.userUUID
+            }
             res.cookie('user', JSON.stringify({name:user.username}), UserController.userCookieParams)
-            // res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:{name:user.name}}})
+            res.cookie('sid', req.sessionID, req.session.cookie as CookieOptions).status(200).send({status:'ok', data:{user:userData}})
             res.status(200).send({status:'ok', data:{user:{name:user.username, email:user.email, userUUID:user.userUUID}}})
         }
         catch(error) {
@@ -68,8 +71,6 @@ class UserController {
         }
         try {
             const user = await UserService.login(email, password)
-            console.log(user)
-            console.log(user.email, req.sessionID)
             await UserService.addSession(req.sessionID, user.email, user.userUUID, user.id)
             let userData = {
                 username:user.username, 
@@ -146,6 +147,7 @@ class UserController {
             res.status(403).send({status:'error', data:{error:'Unauthorised.'}})
             return
         }
+        
     }
 }
 

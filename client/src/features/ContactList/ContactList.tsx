@@ -6,10 +6,10 @@ import useGetContacts from "./hooks/useGetContacts"
 
 
 const DUMMY_CONTACTS:Contact[] = [
-    {name:'steve', uuid:'1'},
-    {name:'adam', uuid:'2'},
-    {name:'tarja', uuid:'3'},
-    {name:'nikita', uuid:'4'},
+    {username:'steve', uuid:'1'},
+    {username:'adam', uuid:'2'},
+    {username:'tarja', uuid:'3'},
+    {username:'nikita', uuid:'4'},
 ]
 
 export default function ContactList() {
@@ -42,7 +42,7 @@ export default function ContactList() {
                 {
                     contacts.map((contact) => {
                         return (
-                            <ContactEntry key={contact.uuid} name={contact.name} avatar={contact.avatar}/>
+                            <ContactEntry key={contact.uuid} name={contact.username} avatar={contact.avatar}/>
                         )
                     })
                 }

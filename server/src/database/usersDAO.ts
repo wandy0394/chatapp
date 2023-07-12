@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 import validator from "validator"
 import { User } from '../types/user'
 import {v4 as uuidv4} from 'uuid'
+import { UserNotFoundError } from '../exceptions/exceptions'
 
 
 let db:Connection
@@ -85,12 +86,12 @@ class UsersDAO {
                 db.query(sqlQuery, [email], (err, result, fields)=>{
                     if (err) {
                         console.log(err)
-                        return reject(new Error('Error querying database'))
+                        reject(new Error('Error querying database'))
                     }
                     else {
                         const rows = (result as RowDataPacket[])
                         if (rows.length <= 0) {
-                            return reject(new Error(`User with email ${email} does not exist.`))
+                            reject(new Error(`User with email ${email} does not exist.`))
                         }
                         else {
                             user.username = rows[0].username
@@ -127,12 +128,12 @@ class UsersDAO {
                 db.query(sqlQuery, [email], (err, result, fields)=>{
                     if (err) {
                         console.log(err)
-                        return reject(new Error('Error querying database.'))
+                        reject(new Error('Error querying database.'))
                     }
                     const rows = (result as RowDataPacket[])
                     
                     if (rows.length <= 0) {
-                        return reject(new Error(`User with email ${email} does not exist.`))
+                        reject(new UserNotFoundError(`User with email ${email} does not exist.`))
                     }
                     else {
                         user.id = rows[0].id
