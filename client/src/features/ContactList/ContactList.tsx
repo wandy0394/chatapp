@@ -5,13 +5,6 @@ import { Contact } from "./types/types"
 import useGetContacts from "./hooks/useGetContacts"
 
 
-const DUMMY_CONTACTS:Contact[] = [
-    {username:'steve', uuid:'1'},
-    {username:'adam', uuid:'2'},
-    {username:'tarja', uuid:'3'},
-    {username:'nikita', uuid:'4'},
-]
-
 export default function ContactList() {
     // const [contacts, setContacts] = useState<Contact[]>(DUMMY_CONTACTS)
     const [collapsed, setCollapsed] = useState<boolean>(false)
@@ -42,7 +35,7 @@ export default function ContactList() {
                 {
                     contacts.map((contact) => {
                         return (
-                            <ContactEntry key={contact.uuid} name={contact.username} avatar={contact.avatar}/>
+                            <ContactEntry key={contact.uuid} name={contact.username} avatar={contact.avatar} status={contact.status}/>
                         )
                     })
                 }

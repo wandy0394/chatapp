@@ -9,5 +9,6 @@ export type User = {
 export type Contact = {
     username:string,
     email:string,
-    userUUID:string
+    userUUID:string,
+    status:string
 }

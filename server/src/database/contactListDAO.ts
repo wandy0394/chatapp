@@ -14,7 +14,7 @@ class ContactListDAO {
         let contactList:Contact[] = []
         const promise:Promise<Contact[]> = new Promise((resolve, reject) => {
             try {
-                const sqlQuery = `SELECT username, email, userUUID 
+                const sqlQuery = `SELECT username, email, userUUID, Contacts.status 
                                     from Users JOIN Contacts 
                                     ON Contacts.AddresseeEmail=Users.email
                                     WHERE Contacts.RequesterEmail = ?`
@@ -29,7 +29,8 @@ class ContactListDAO {
                             return {
                                 username:row.username,
                                 email:row.email,
-                                userUUID:row.useruuid
+                                userUUID:row.userUUID,
+                                status:row.status
                             }
                         })
                         resolve(contactList)

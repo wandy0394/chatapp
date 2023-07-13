@@ -2,6 +2,7 @@ import {Request, Response, NextFunction, CookieOptions} from 'express'
 import ContactListService from '../services/contactListService'
 import UserService from '../services/userService'
 import { UserNotFoundError } from '../exceptions/exceptions'
+import { NotificationService } from '../services/notificationService'
 
 
 //requireAuth middleware is used before this is called
@@ -28,7 +29,12 @@ class ContactListController {
                 email:addressee.email,
                 userUUID:addressee.userUUID
             }
-            res.status(200).send({status:'ok', data:userData})
+            if (NotificationService.pushNotification(`You have a contact request from ${requesterEmail}.`, addresseeEmail, 'contact-request')) {
+                res.status(200).send({status:'ok', data:userData})
+            }
+            else {
+                res.status(200).send({status:'error', data:{error:'Notification not sent.'}})
+            }
         }
         catch (e) {
             if (e instanceof UserNotFoundError) {

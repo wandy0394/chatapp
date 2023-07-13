@@ -1,12 +1,13 @@
 type Props = {
     avatar?:string
     name:string
+    status:string
 }
 
 export default function ContactEntry(props:Props) {
-    const {avatar, name} = props
+    const {avatar, name, status} = props
     return (
-        <div className='w-full flex items-center gap-4 rounded-full p-2 hover:cursor-pointer hover:bg-base-200'>
+        <div className='w-full flex items-center gap-4 rounded-full py-2 px-4 hover:cursor-pointer hover:bg-base-200'>
             {
                 avatar 
                    ? <img className='avatar aspect-square w-10' src={avatar || ''} />
@@ -16,7 +17,10 @@ export default function ContactEntry(props:Props) {
                         </div>
                     </div> 
             }
-            <label className="text-xl">{name}</label>
+            <div className='w-full flex items-center justify-between'>
+                <label className="text-xl">{name}</label>
+                <label className={`text-xl ${status === 'PENDING' ? 'visible text-yellow-500' :'hidden'}`}>{status}</label>
+            </div>
         </div>
     )
 }

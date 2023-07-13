@@ -1,6 +1,7 @@
 import ChatInput from "../features/ChatInput/ChatInput";
 import ChatMessages from "../features/ChatMessages/ChatMessages";
 import ContactList from "../features/ContactList/ContactList";
+import NotificationPane from "../features/Notification/NotificationPane";
 import Conversations from "../features/RecentChats/Conversations";
 
 export default function Home() {
@@ -17,7 +18,7 @@ export default function Home() {
                 </div>
             </div>
             <div className='h-full w-full border border-green-500 hidden lg:block'>
-                Other
+                <NotificationPane/>
             </div>
       </div>
     )
