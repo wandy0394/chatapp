@@ -1,34 +1,29 @@
 import { useEffect, useState } from "react"
 import NotificationCard from "./NotificationCard"
-import ContactAgent from "../../services/contact-service"
 import { ContactRequestNotification, MessageNotification, Notification } from "./models/Notification"
 
-// export type Notification = {
-//     type:string
-//     message:string,
-//     cancellable:boolean,
-//     rejectable:boolean
-//     acceptable:boolean,
-// }
-//Might need to make Notification a class. Need some that are general, some that are actionable requests
-
-// const DUMMY_NOTIF = new MessageNotification('This is a notification')
-
+const URL = 'http://192.168.0.128:4040/notifications'
 export default function NotificationPane() {
 
     const [notifications, setNotifications] = useState<Notification[]>([])
+
+    function removeNotification(notificationId:string) {
+        const newNotifications = notifications.filter(n=>n.getMessageData().id !== notificationId)
+        setNotifications(newNotifications)
+    }
+
     useEffect(()=>{
-        const source = new EventSource('http://192.168.0.128:4040/notifications', {
+        const source = new EventSource(URL, {
             withCredentials:true
         })
 
         const handleContactRequest = (msg:MessageEvent) => {
-            let notif = new ContactRequestNotification(msg)
+            let notif = new ContactRequestNotification(msg, removeNotification)
             setNotifications([...notifications, notif])
         }
 
         const handleContactRequestAccepted = (msg:MessageEvent) => {
-            let notif:MessageNotification = new MessageNotification(msg)
+            let notif:MessageNotification = new MessageNotification(msg, removeNotification)
             setNotifications([...notifications, notif])
         }
 
