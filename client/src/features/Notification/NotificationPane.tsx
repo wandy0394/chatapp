@@ -1,12 +1,18 @@
 import { useEffect, useState } from "react"
 import NotificationCard from "./NotificationCard"
+import ContactAgent from "../../services/contact-service"
+import { ContactRequestNotification, MessageNotification, Notification } from "./models/Notification"
 
-export type Notification = {
-    message:string,
-    cancellable:boolean,
-    rejectable:boolean
-    acceptable:boolean,
-}
+// export type Notification = {
+//     type:string
+//     message:string,
+//     cancellable:boolean,
+//     rejectable:boolean
+//     acceptable:boolean,
+// }
+//Might need to make Notification a class. Need some that are general, some that are actionable requests
+
+// const DUMMY_NOTIF = new MessageNotification('This is a notification')
 
 export default function NotificationPane() {
 
@@ -17,31 +23,34 @@ export default function NotificationPane() {
         })
 
         const handleContactRequest = (msg:MessageEvent) => {
-            console.log(msg.data)
-            let notif:Notification = {
-                message:msg.data,
-                cancellable:false,
-                rejectable:true,
-                acceptable:true
-            }
+            let notif = new ContactRequestNotification(msg)
             setNotifications([...notifications, notif])
         }
 
-        source.addEventListener('registration', (msg)=>console.log(msg.data))
+        const handleContactRequestAccepted = (msg:MessageEvent) => {
+            let notif:MessageNotification = new MessageNotification(msg)
+            setNotifications([...notifications, notif])
+        }
+
         source.addEventListener('contact-request', handleContactRequest)
+        source.addEventListener('contact-request-accepted', handleContactRequestAccepted)
         return ()=>{
             source.removeEventListener('contact-request', handleContactRequest)
+            source.removeEventListener('contact-request-accepted', handleContactRequestAccepted)
         }
 
     }, [])
+
     return (
         <div className='w-full flex flex-col items-center justify-start'>
-            <span 
-                className='text-2xl font-medium w-full h-full flex flex-col justify-center hover:cursor-pointer' 
-            >
-                Notifications
-            </span>
-            <div className='w-full flex flex-col items-center justify-center gap-4'>
+            <div className="px-4 py-2 w-full flex justify-between items-center gap-4 bg-base-300" >
+                <span 
+                    className='text-2xl font-medium w-full h-full flex flex-col justify-center' 
+                >
+                    Notifications
+                </span>
+            </div>
+            <div className='w-full flex flex-col items-center justify-center gap-4 p-4'>
                 {
                     notifications.map(notification=>{
                         return (
@@ -49,6 +58,8 @@ export default function NotificationPane() {
                         )
                     })
                 }
+                {/* <NotificationCard notification={DUMMY_NOTIF}/> */}
+
             </div>
         </div>
     )

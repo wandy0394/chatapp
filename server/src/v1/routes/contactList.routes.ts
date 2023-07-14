@@ -7,7 +7,8 @@ const router = express.Router()
 router.use(requireAuth)
 router.route("/")
     .get(ContactListController.getContactList)
-    .post(ContactListController.addContact)
+    .post(ContactListController.requestContact)
+    .delete(ContactListController.removeContact)
 
 
 export default router

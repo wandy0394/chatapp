@@ -26,11 +26,47 @@ class ContactListService {
         }
     }
 
-    static async addContact(requesterEmail:string, addresseeEmail:string):Promise<User> {
+    static async requestContact(requesterEmail:string, addresseeEmail:string):Promise<User> {
         try {
             const addressee = await UserService.getUser(addresseeEmail)
-            const result = await ContactListDAO.addContact(requesterEmail, addresseeEmail)
+            await ContactListDAO.requestContact(requesterEmail, addresseeEmail, 'PENDING')
             return addressee
+        }
+        catch (e) {
+            console.error(e)
+            throw(e)
+        }
+    }
+
+    static async checkPendingRequest(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+        try {
+            const pendingRequestExists = await ContactListDAO.checkPendingRequest(requesterEmail, addresseeEmail)
+            return pendingRequestExists
+        }
+        catch (e) {
+            console.error(e)
+            throw(e)
+        }
+    }
+
+    static async acceptContactRequest(requesterEmail:string, addresseeEmail:string) {
+        try {
+            const addressee = await UserService.getUser(addresseeEmail)
+            const status='CONFIRMED'
+            await ContactListDAO.updateContactStatus(requesterEmail, addresseeEmail, status)
+            await ContactListDAO.requestContact(requesterEmail, addresseeEmail, status)
+            return addressee
+        }
+        catch (e) {
+            console.error(e)
+            throw(e)
+        }
+    }
+
+    static async removeContact(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+        try {
+            const result = await ContactListDAO.removeContact(requesterEmail, addresseeEmail)
+            return result
         }
         catch (e) {
             console.error(e)

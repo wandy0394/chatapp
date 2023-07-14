@@ -50,18 +50,18 @@ export default class ContactAgent {
         }
     }
 
-    static async removeContact(email:string) {
+    static async removeContact(addresseeEmail:string) {
         const config:RequestInit = {
             method:'DELETE',
             headers:headers,
             credentials:credentials,
             body: JSON.stringify({
-                email:email,
+                addresseeEmail:addresseeEmail,
             })
         }
 
         try {
-            const response = await request<ResponseObject<User>>(`${url}/removeContact`, config)
+            const response = await request<ResponseObject<User>>(`${url}`, config)
             if (response.status === RESPONSE_TYPE.OK) {
                 return response.data
             }

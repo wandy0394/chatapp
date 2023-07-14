@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from 'express'
 import { Server as SocketServer} from "socket.io"
 import {createServer} from "http"
-import { Message } from './types/message'
+import { ChatMessage } from './types/message'
 import userRouter from './v1/routes/users.routes'
 import contactListRouter from './v1/routes/contactList.routes'
 import notificationRouter from './v1/routes/notification.routes'
@@ -28,7 +28,7 @@ io.on("connection", (socket)=>{
     console.log(`connected with ${socket.id}`)
     // socket.send(`hello ${socket.id}`)
 
-    socket.on("message", (message:Message)=>{
+    socket.on("message", (message:ChatMessage)=>{
         console.log(`Received message: ${message.content}`)
         io.emit("message", message)
     })

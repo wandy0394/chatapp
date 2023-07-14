@@ -1,12 +1,19 @@
 import { Response } from "express";
+import { Message } from "../types/message";
 
 type Clients = {
     [key:string] : Response
 }
+
+type MessageData = {
+    [key:string] : string
+}
+
+//should this be in a database?
 let clients:Clients = {}
+
 export class NotificationService {
     static async register(email:string, res:Response):Promise<Response> {
-        console.log(email)
         try {
             res.set({
                 'Cache-Control':'no-cache',
@@ -23,15 +30,15 @@ export class NotificationService {
         }
     }
 
-    static pushNotification(message:string, email:string, eventType:string):boolean {
-        if (email in clients) {
-            clients[email].write(`event: ${eventType}\n`)
-            clients[email].write(`data: ${message}\n\n`)
-            return true
-        }
-        else {
+    static pushNotification(message:Message, email:string, eventType:string):boolean {
+        if (!(email in clients)) {
             console.log('Client not registered')
+            return false
         }
-        return false
+        clients[email].write(`event: ${eventType}\n`)
+        clients[email].write(`from: ${message.from}\n`)
+        clients[email].write(`id: ${message.id}\n`)
+        clients[email].write(`data: ${JSON.stringify(message)}\n\n`)
+        return true
     }
 }
