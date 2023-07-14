@@ -71,7 +71,7 @@ export class ContactRequestNotification extends Notification {
     }
     public accept(): void {
         console.log('accept')
-        ContactAgent.addContact(this.getMessageData().from)
+        ContactAgent.acceptContactRequest(this.getMessageData().from)
             .then((response) =>{
                 console.log('success')
             } )

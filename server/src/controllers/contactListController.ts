@@ -20,11 +20,10 @@ class ContactListController {
         }
     }
 
-    static async requestContact(req:Request, res:Response, next:NextFunction) {
+    static async acceptContactRequest(req:Request, res:Response, next:NextFunction) {
         const requesterEmail = req.body.email
         const addresseeEmail = req.body.addresseeEmail
         try {
-
             //check for outstanding request
             const pendingRequestExists = await ContactListService.checkPendingRequest(requesterEmail, addresseeEmail)
             if (pendingRequestExists) {
@@ -43,6 +42,43 @@ class ContactListController {
                 res.status(200).send({status:'ok', data:userData})
             }
             else {
+                res.status(200).send({status:'error', data:{error:'Could not accept request'}})
+            }
+        }
+        catch(e) {
+            if (e instanceof UserNotFoundError) {
+                res.status(500).send({status:'error', data:{error:e.message}})
+            }
+            else {
+                res.status(500).send({status:'error', data:{error:'Internal server error.'}})
+            }
+            return
+        }
+    }
+
+    static async requestContact(req:Request, res:Response, next:NextFunction) {
+        const requesterEmail = req.body.email
+        const addresseeEmail = req.body.addresseeEmail
+        try {
+
+            //check for outstanding request
+            // const pendingRequestExists = await ContactListService.checkPendingRequest(requesterEmail, addresseeEmail)
+            // if (pendingRequestExists) {
+            //     const addressee = await ContactListService.acceptContactRequest(requesterEmail, addresseeEmail)
+            //     const userData = {
+            //         username:addressee.username,
+            //         email:addressee.email,
+            //         userUUID:addressee.userUUID
+            //     }
+            //     const message:Message = {
+            //         from:'System',
+            //         message: `${requesterEmail} has accepted your contact request.`,
+            //         id:'1234'
+            //     }
+            //     NotificationService.pushNotification(message, addresseeEmail, 'contact-request-resolved')
+            //     res.status(200).send({status:'ok', data:userData})
+            // }
+            // else {
                 const addressee = await ContactListService.requestContact(requesterEmail, addresseeEmail)
                 const userData = {
                     username:addressee.username,
@@ -56,7 +92,7 @@ class ContactListController {
                 }
                 NotificationService.pushNotification(message, addresseeEmail, 'contact-request')
                 res.status(200).send({status:'ok', data:userData})
-            }
+            // }
 
         }
         catch (e) {

@@ -72,6 +72,32 @@ export default class ContactAgent {
         }
     }
 
+
+    static async acceptContactRequest(addresseeEmail:string) {
+        const config:RequestInit = {
+            method:'POST',
+            headers:headers,
+            credentials:credentials,
+            body: JSON.stringify({
+                addresseeEmail:addresseeEmail,
+            })
+        }
+
+        try {
+            const response = await request<ResponseObject<User>>(`${url}/request`, config)
+            if (response.status === RESPONSE_TYPE.OK) {
+                return response.data
+            }
+            else if (response.status === RESPONSE_TYPE.ERROR) {
+                console.log('error has been returned')
+            }
+        }
+        catch(error) {
+            if (error instanceof RequestError || error instanceof Error) throw (error)
+            throw new Error('Unknown Error')  
+        }        
+    }
+
     static async rejectContactRequest(addresseeEmail:string) {
         const config:RequestInit = {
             method:'DELETE',
