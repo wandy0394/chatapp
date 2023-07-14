@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react"
 import NotificationCard from "./NotificationCard"
-import { ContactRequestNotification, MessageNotification, Notification } from "./models/Notification"
 import useNotifications from "./hooks/useNotifications"
 import { useContactListContext } from "../ContactList/hooks/useContactListContext"
 
-const URL = 'http://192.168.0.128:4040/notifications'
 export default function NotificationPane() {
-    
+
     const {setLoading} = useContactListContext()
     const {notifications, setNotifications} = useNotifications({setLoading})
 

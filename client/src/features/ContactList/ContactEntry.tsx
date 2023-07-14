@@ -1,4 +1,3 @@
-import { useState } from "react"
 import ContactEntryMenu from "./ContactEntryMenu"
 import ContactAgent from "../../services/contact-service"
 import { useContactListContext } from "./hooks/useContactListContext"

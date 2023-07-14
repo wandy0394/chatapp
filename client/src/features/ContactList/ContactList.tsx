@@ -1,7 +1,6 @@
 import { useState } from "react"
 import ContactEntry from "./ContactEntry"
 import AddContactForm from "./AddContactForm"
-import useGetContacts from "./hooks/useGetContacts"
 import { useContactListContext } from "./hooks/useContactListContext"
 
 
