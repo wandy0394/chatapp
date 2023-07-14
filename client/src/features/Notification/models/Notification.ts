@@ -81,6 +81,13 @@ export class ContactRequestNotification extends Notification {
     }
     public reject(): void {
         console.log('reject')
+        ContactAgent.rejectContactRequest(this.getMessageData().from)
+            .then(()=>{
+                console.log('rejected success')
+            })
+            .catch(()=>{
+                console.log('could not reject')
+            })
 
     }
     public acknowledge(): void {

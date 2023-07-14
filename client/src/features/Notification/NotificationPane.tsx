@@ -33,10 +33,10 @@ export default function NotificationPane() {
         }
 
         source.addEventListener('contact-request', handleContactRequest)
-        source.addEventListener('contact-request-accepted', handleContactRequestAccepted)
+        source.addEventListener('contact-request-resolved', handleContactRequestAccepted)
         return ()=>{
             source.removeEventListener('contact-request', handleContactRequest)
-            source.removeEventListener('contact-request-accepted', handleContactRequestAccepted)
+            source.removeEventListener('contact-request-resolved', handleContactRequestAccepted)
         }
 
     }, [])
@@ -58,8 +58,6 @@ export default function NotificationPane() {
                         )
                     })
                 }
-                {/* <NotificationCard notification={DUMMY_NOTIF}/> */}
-
             </div>
         </div>
     )

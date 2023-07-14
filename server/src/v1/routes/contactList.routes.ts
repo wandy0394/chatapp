@@ -10,5 +10,7 @@ router.route("/")
     .post(ContactListController.requestContact)
     .delete(ContactListController.removeContact)
 
+router.route("/request")
+    .delete(ContactListController.rejectRequestContact)
 
 export default router

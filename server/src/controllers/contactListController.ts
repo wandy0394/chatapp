@@ -39,12 +39,8 @@ class ContactListController {
                     message: `${requesterEmail} has accepted your contact request.`,
                     id:'1234'
                 }
-                if (NotificationService.pushNotification(message, addresseeEmail, 'contact-request-accepted')) {
-                    res.status(200).send({status:'ok', data:userData})
-                }
-                else {
-                    res.status(200).send({status:'error', data:{error:'Notification not sent.'}})
-                }
+                NotificationService.pushNotification(message, addresseeEmail, 'contact-request-resolved')
+                res.status(200).send({status:'ok', data:userData})
             }
             else {
                 const addressee = await ContactListService.requestContact(requesterEmail, addresseeEmail)
@@ -58,12 +54,8 @@ class ContactListController {
                     message: `You have a contact request from ${requesterEmail}.`,
                     id:'4321'
                 }
-                if (NotificationService.pushNotification(message, addresseeEmail, 'contact-request')) {
-                    res.status(200).send({status:'ok', data:userData})
-                }
-                else {
-                    res.status(200).send({status:'error', data:{error:'Notification not sent.'}})
-                }
+                NotificationService.pushNotification(message, addresseeEmail, 'contact-request')
+                res.status(200).send({status:'ok', data:userData})
             }
 
         }
@@ -86,6 +78,29 @@ class ContactListController {
             const result = await ContactListService.removeContact(requesterEmail, addresseeEmail)
             if (result !== undefined) res.status(200).send({status:'ok', data:'Contact deleted.'})
             else res.status(200).send({status:'error', data:'Could not delete contact.'})
+        }
+        catch (e) {
+            res.status(500).send({status:'error', data:{error:'Internal server error.'}})
+        }
+    }
+
+    static async rejectRequestContact(req:Request, res:Response, next:NextFunction) {
+        try {
+            const requesterEmail:string = req.body.email
+            const addresseeEmail:string = req.body.addresseeEmail
+            const result = await ContactListService.removeContact(requesterEmail, addresseeEmail)
+            if (result !== undefined) {
+                const message:Message = {
+                    from:'System',
+                    message: `Your contact request to ${requesterEmail} has been rejected.`,
+                    id:'111'
+                }
+                NotificationService.pushNotification(message, addresseeEmail, 'contact-request-resolved')
+                res.status(200).send({status:'ok', data:'Request rejected'})
+            }
+            else {
+                res.status(200).send({status:'error', data:'Could not reject contact request.'})
+            }
         }
         catch (e) {
             res.status(500).send({status:'error', data:{error:'Internal server error.'}})

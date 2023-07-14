@@ -72,6 +72,28 @@ export default class ContactAgent {
         }
     }
 
+    static async rejectContactRequest(addresseeEmail:string) {
+        const config:RequestInit = {
+            method:'DELETE',
+            headers:headers,
+            credentials:credentials,
+            body: JSON.stringify({
+                addresseeEmail:addresseeEmail,
+            })
+        }
+
+        try {
+            const response = await request<ResponseObject<User>>(`${url}/request`, config)
+            if (response.status === RESPONSE_TYPE.OK) {
+                return response.data
+            }
+        }
+        catch(error) {
+            if (error instanceof RequestError || error instanceof Error) throw (error)
+            throw new Error('Unknown Error')  
+        }
+    }
+
     static async getContactList() {
         const config:RequestInit = {
             method:'GET',

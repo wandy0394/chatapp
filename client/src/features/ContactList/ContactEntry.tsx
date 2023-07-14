@@ -18,7 +18,6 @@ export default function ContactEntry(props:Props) {
 
     }
     function handleRemove() {
-        console.log(email)
         ContactAgent.removeContact(email)
             .then(response=>{
                 console.log(response)
