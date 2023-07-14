@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import NotificationCard from "./NotificationCard"
 import { ContactRequestNotification, MessageNotification, Notification } from "./models/Notification"
 
@@ -7,34 +7,31 @@ export default function NotificationPane() {
 
     const [notifications, setNotifications] = useState<Notification[]>([])
 
-    function removeNotification(notificationId:string) {
-        const newNotifications = notifications.filter(n=>n.getMessageData().id !== notificationId)
-        setNotifications(newNotifications)
+
+    const handleContactRequest = (msg:MessageEvent) => {
+        let notif = new ContactRequestNotification(msg)
+        setNotifications(prev => [...prev, notif])
     }
 
+    const handleContactRequestResolved = (msg:MessageEvent) => {
+        let notif:MessageNotification = new MessageNotification(msg)
+        setNotifications(prev => [...prev, notif])
+    }
     useEffect(()=>{
         const source = new EventSource(URL, {
             withCredentials:true
         })
-
-        const handleContactRequest = (msg:MessageEvent) => {
-            let notif = new ContactRequestNotification(msg, removeNotification)
-            setNotifications([...notifications, notif])
-        }
-
-        const handleContactRequestAccepted = (msg:MessageEvent) => {
-            let notif:MessageNotification = new MessageNotification(msg, removeNotification)
-            setNotifications([...notifications, notif])
-        }
-
         source.addEventListener('contact-request', handleContactRequest)
-        source.addEventListener('contact-request-resolved', handleContactRequestAccepted)
+        source.addEventListener('contact-request-resolved', handleContactRequestResolved)
         return ()=>{
             source.removeEventListener('contact-request', handleContactRequest)
-            source.removeEventListener('contact-request-resolved', handleContactRequestAccepted)
+            source.removeEventListener('contact-request-resolved', handleContactRequestResolved)
         }
 
     }, [])
+
+
+
 
     return (
         <div className='w-full flex flex-col items-center justify-start'>
@@ -49,7 +46,12 @@ export default function NotificationPane() {
                 {
                     notifications.map(notification=>{
                         return (
-                            <NotificationCard notification={notification}/>
+                            <NotificationCard 
+                                key={notification.getMessageData().id} 
+                                notification={notification} 
+                                notifications={notifications} 
+                                setNotifications={setNotifications}
+                            />
                         )
                     })
                 }

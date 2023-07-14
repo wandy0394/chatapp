@@ -9,56 +9,50 @@ export abstract class Notification {
     private message:string = '';
     private messageData:MessageData
     protected abstract type:string;
-    private removeNotificationCallback:(id:string) => void
     /**
      *
-     */
-    constructor(messageEvent:MessageEvent, removeNotificationCallback:(id:string)=>void) {
-        this.messageData = {...JSON.parse(messageEvent.data)}
-        this.message = this.messageData.message
-        this.removeNotificationCallback = removeNotificationCallback
+    */
+   constructor(messageEvent:MessageEvent) {
+       this.messageData = {...JSON.parse(messageEvent.data)}
+       this.message = this.messageData.message
     }
-
+    
     public getMessage() {
         return this.message
     }
-
+    
     public getType() {
         return this.type
     }
-
+    
     public getMessageData() {
         return this.messageData
     }
 
-    protected clearNotification() {
-        this.removeNotificationCallback(this.messageData.id)
-    }
-
+    
     public abstract isAcknowledegable():boolean
-
+    
     public abstract isRejectable():boolean 
-
+    
     public abstract isAccpetable():boolean 
 
     public abstract accept():void
 
     public abstract reject():void
-
-    public abstract acknowledge():void
     
+    public abstract acknowledge():void
     
 }
 
 export class ContactRequestNotification extends Notification {
-
+    
     protected type: string;
     /**
      *
      */
 
-    constructor(messageEvent:MessageEvent, removeNotification:(id:string)=>void) {
-        super(messageEvent, removeNotification);
+    constructor(messageEvent:MessageEvent) {
+        super(messageEvent);
         this.type='Contact Request'
     }
 
@@ -76,25 +70,25 @@ export class ContactRequestNotification extends Notification {
     public accept(): void {
         console.log('accept')
         ContactAgent.acceptContactRequest(this.getMessageData().from)
-            .then((response) =>{
+            .then(()=>{
                 console.log('success')
-                this.clearNotification()
             } )
-            .catch(response=>{
+            .catch(()=>{
                 console.log('fail')
             })
+        // this.clearNotification()
+
     }
     public reject(): void {
         console.log('reject')
         ContactAgent.rejectContactRequest(this.getMessageData().from)
             .then(()=>{
                 console.log('rejected success')
-                this.clearNotification()
             })
             .catch(()=>{
                 console.log('could not reject')
             })
-
+        // this.clearNotification()
     }
     public acknowledge(): void {
         //do nothing
@@ -104,8 +98,8 @@ export class ContactRequestNotification extends Notification {
 
 export class MessageNotification extends Notification {
     protected type: string;
-    constructor(messageEvent:MessageEvent, removeNotification:(id:string)=>void) {
-        super(messageEvent, removeNotification);
+    constructor(messageEvent:MessageEvent) {
+        super(messageEvent);
         this.type='Message'
     }
     public isAcknowledegable(): boolean {
@@ -127,6 +121,5 @@ export class MessageNotification extends Notification {
     }
     public acknowledge(): void {
         //send ack to server
-        this.clearNotification()
     }
 }
