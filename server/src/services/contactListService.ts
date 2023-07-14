@@ -38,9 +38,20 @@ class ContactListService {
         }
     }
 
-    static async checkPendingRequest(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+    static async checkPendingRequestByAddressee(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
         try {
-            const pendingRequestExists = await ContactListDAO.checkPendingRequest(requesterEmail, addresseeEmail)
+            const pendingRequestExists = await ContactListDAO.checkPendingRequestByAddressee(requesterEmail, addresseeEmail)
+            return pendingRequestExists
+        }
+        catch (e) {
+            console.error(e)
+            throw(e)
+        }
+    }
+
+    static async checkPendingRequestByRequester(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+        try {
+            const pendingRequestExists = await ContactListDAO.checkPendingRequestByRequester(requesterEmail, addresseeEmail)
             return pendingRequestExists
         }
         catch (e) {
@@ -63,9 +74,9 @@ class ContactListService {
         }
     }
 
-    static async removeContact(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+    static async removeContact(rejecterEmail:string, requesterEmail:string):Promise<boolean> {
         try {
-            const result = await ContactListDAO.removeContact(requesterEmail, addresseeEmail)
+            const result = await ContactListDAO.removeContact(rejecterEmail, requesterEmail)
             return result
         }
         catch (e) {

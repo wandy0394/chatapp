@@ -73,13 +73,13 @@ export default class ContactAgent {
     }
 
 
-    static async acceptContactRequest(addresseeEmail:string) {
+    static async acceptContactRequest(requesterEmail:string) {
         const config:RequestInit = {
             method:'POST',
             headers:headers,
             credentials:credentials,
             body: JSON.stringify({
-                addresseeEmail:addresseeEmail,
+                requesterEmail:requesterEmail,
             })
         }
 
@@ -98,13 +98,13 @@ export default class ContactAgent {
         }        
     }
 
-    static async rejectContactRequest(addresseeEmail:string) {
+    static async rejectContactRequest(requesterEmail:string) {
         const config:RequestInit = {
             method:'DELETE',
             headers:headers,
             credentials:credentials,
             body: JSON.stringify({
-                addresseeEmail:addresseeEmail,
+                requesterEmail:requesterEmail,
             })
         }
 

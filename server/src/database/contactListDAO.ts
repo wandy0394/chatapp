@@ -88,7 +88,7 @@ class ContactListDAO {
         return promise
     }
 
-    static async checkPendingRequest(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+    static async checkPendingRequestByAddressee(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
         const promise:Promise<boolean> = new Promise((resolve, reject) => {
             try {
                 const sqlQuery = `SELECT status from Contacts where RequesterEmail=? AND AddresseeEmail=? AND Status='PENDING'`
@@ -110,12 +110,35 @@ class ContactListDAO {
         })
         return promise
     }
+
+    static async checkPendingRequestByRequester(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+        const promise:Promise<boolean> = new Promise((resolve, reject) => {
+            try {
+                const sqlQuery = `SELECT status from Contacts where RequesterEmail=? AND AddresseeEmail=? AND Status='PENDING'`
+                console.log(requesterEmail, addresseeEmail)
+                db.query(sqlQuery, [requesterEmail, addresseeEmail ], (err, result, fields) => {
+                    if (err) {
+                        console.error(err)
+                        reject (new Error('Error querying database'))
+                    }
+                    const rows = (result as RowDataPacket[])
+                    console.log(result)
+                    if (rows.length > 0) resolve(true)
+                    else resolve(false)
+                })
+            }
+            catch(e) {
+                reject(e)
+            }
+        })
+        return promise
+    }
     
-    static async removeContact(requesterEmail:string, addresseeEmail:string):Promise<boolean> {
+    static async removeContact(rejecterEmail:string, requesterEmail:string):Promise<boolean> {
         const promise:Promise<boolean> = new Promise((resolve, reject) => {
             try {
                 const sqlQuery = `DELETE FROM Contacts where (RequesterEmail=? AND AddresseeEmail=?) OR (RequesterEmail=? AND AddresseeEmail=?)`
-                db.query(sqlQuery, [requesterEmail, addresseeEmail, addresseeEmail, requesterEmail], (err, result, fields) => {
+                db.query(sqlQuery, [rejecterEmail, requesterEmail, requesterEmail, rejecterEmail], (err, result, fields) => {
                     if (err) {
                         console.error(err)
                         reject (new Error('Error querying database'))

@@ -1,5 +1,4 @@
 import ContactAgent from "../../../services/contact-service";
-import useGetContacts from "../../ContactList/hooks/useGetContacts";
 
 type MessageData = {
     [key:string]:string

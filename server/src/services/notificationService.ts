@@ -5,10 +5,6 @@ type Clients = {
     [key:string] : Response
 }
 
-type MessageData = {
-    [key:string] : string
-}
-
 //should this be in a database?
 let clients:Clients = {}
 
@@ -36,8 +32,6 @@ export class NotificationService {
             return false
         }
         clients[email].write(`event: ${eventType}\n`)
-        clients[email].write(`from: ${message.from}\n`)
-        clients[email].write(`id: ${message.id}\n`)
         clients[email].write(`data: ${JSON.stringify(message)}\n\n`)
         return true
     }
