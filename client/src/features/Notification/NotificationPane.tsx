@@ -1,37 +1,14 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import NotificationCard from "./NotificationCard"
 import { ContactRequestNotification, MessageNotification, Notification } from "./models/Notification"
+import useNotifications from "./hooks/useNotifications"
+import { useContactListContext } from "../ContactList/hooks/useContactListContext"
 
 const URL = 'http://192.168.0.128:4040/notifications'
 export default function NotificationPane() {
-
-    const [notifications, setNotifications] = useState<Notification[]>([])
-
-
-    const handleContactRequest = (msg:MessageEvent) => {
-        let notif = new ContactRequestNotification(msg)
-        setNotifications(prev => [...prev, notif])
-    }
-
-    const handleContactRequestResolved = (msg:MessageEvent) => {
-        let notif:MessageNotification = new MessageNotification(msg)
-        setNotifications(prev => [...prev, notif])
-    }
-    useEffect(()=>{
-        const source = new EventSource(URL, {
-            withCredentials:true
-        })
-        source.addEventListener('contact-request', handleContactRequest)
-        source.addEventListener('contact-request-resolved', handleContactRequestResolved)
-        return ()=>{
-            source.removeEventListener('contact-request', handleContactRequest)
-            source.removeEventListener('contact-request-resolved', handleContactRequestResolved)
-        }
-
-    }, [])
-
-
-
+    
+    const {setLoading} = useContactListContext()
+    const {notifications, setNotifications} = useNotifications({setLoading})
 
     return (
         <div className='w-full flex flex-col items-center justify-start'>

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import ContactAgent from "../../services/contact-service"
+import { useContactListContext } from "./hooks/useContactListContext"
 
 type Props = {
 
@@ -12,6 +13,9 @@ type Message = {
 export default function AddContactForm(props:Props) {
     const [email, setEmail] = useState<string>('')
     const [message, setMessage] = useState<Message>({type:'info', message:''})
+    const {setLoading} = useContactListContext()
+    
+    
     function handleAddContact(e:React.FormEvent<HTMLFormElement>) {
         e.preventDefault()
         console.log(email)
@@ -19,6 +23,7 @@ export default function AddContactForm(props:Props) {
             .then((response) => {
                 console.log(response)
                 setMessage({type:'success', message:'Request sent.'})
+                setLoading(true)
             })
             .catch((response) => {
                 setMessage({type:'error', message:response.message})

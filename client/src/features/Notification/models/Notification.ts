@@ -1,4 +1,4 @@
-import ContactAgent from "../../../services/contact-service";
+import ContactAgent, { User } from "../../../services/contact-service";
 
 type MessageData = {
     [key:string]:string
@@ -35,6 +35,7 @@ export abstract class Notification {
     
     public abstract isAccpetable():boolean 
 
+    public abstract acceptAsync():Promise<any>
     public abstract accept():void
 
     public abstract reject():void
@@ -66,18 +67,23 @@ export class ContactRequestNotification extends Notification {
     public isRejectable(): boolean {
         return true
     }
-    public accept(): void {
+    public async acceptAsync(): Promise<User|undefined> {
         console.log('accept')
-        ContactAgent.acceptContactRequest(this.getMessageData().from)
-            .then(()=>{
-                console.log('success')
-            } )
-            .catch(()=>{
-                console.log('fail')
-            })
+        // ContactAgent.acceptContactRequest(this.getMessageData().from)
+        //     .then(()=>{
+        //         console.log('success')
+        //     } )
+        //     .catch(()=>{
+        //         console.log('fail')
+        //     })
         // this.clearNotification()
-
+        return ContactAgent.acceptContactRequest(this.getMessageData().from)
     }
+
+    public accept():void {
+        Function.prototype()
+    }
+
     public reject(): void {
         console.log('reject')
         ContactAgent.rejectContactRequest(this.getMessageData().from)
@@ -113,6 +119,10 @@ export class MessageNotification extends Notification {
     public accept(): void {
         //do nothing
         Function.prototype()
+    }
+
+    public async acceptAsync(): Promise<void> {
+        return Promise.resolve()
     }
     public reject(): void {
         //do nothing

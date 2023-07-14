@@ -2,12 +2,13 @@ import { useState } from "react"
 import ContactEntry from "./ContactEntry"
 import AddContactForm from "./AddContactForm"
 import useGetContacts from "./hooks/useGetContacts"
+import { useContactListContext } from "./hooks/useContactListContext"
 
 
 export default function ContactList() {
     const [collapsed, setCollapsed] = useState<boolean>(false)
     const [addContactVisible, setAddContactVisible] = useState<boolean>(false)
-    const {contacts, message} = useGetContacts()
+    const {contacts, message, loading, setLoading} = useContactListContext()
     function handleClick() {
         setAddContactVisible(state=>!state)
     }

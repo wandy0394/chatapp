@@ -1,3 +1,4 @@
+import { useContactListContext } from "../ContactList/hooks/useContactListContext"
 import { Notification } from "./models/Notification"
 type Props = {
     notification:Notification
@@ -7,7 +8,7 @@ type Props = {
 
 export default function NotificationCard(props:Props) {
     const {notification, setNotifications, notifications} = props
-
+    const {setLoading} = useContactListContext()
 
     function removeNotification() {
         const newNotifications = [...notifications].filter(n=>n.getMessageData().id !== notification.getMessageData().id)
@@ -15,8 +16,17 @@ export default function NotificationCard(props:Props) {
     }
 
     function handleAccept() {
-        notification.accept()
-        removeNotification()
+        notification.acceptAsync()
+            .then(()=>{
+                removeNotification()
+                if (notification.getType() === 'Contact Request') {
+                    setLoading(true)
+                }
+            })
+            .catch(()=>{
+                //TODO
+                console.log('error')
+            })
     }
 
     function handleReject() {

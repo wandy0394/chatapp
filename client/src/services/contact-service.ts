@@ -11,7 +11,7 @@ const headers = {
 };
 const credentials = "include";
 
-type User = {
+export type User = {
     email:string,
     name:string
     username?:string

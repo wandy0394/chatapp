@@ -1,6 +1,7 @@
 import { useState } from "react"
 import ContactEntryMenu from "./ContactEntryMenu"
 import ContactAgent from "../../services/contact-service"
+import { useContactListContext } from "./hooks/useContactListContext"
 
 type Props = {
     avatar?:string
@@ -13,7 +14,7 @@ type Props = {
 
 export default function ContactEntry(props:Props) {
     const {avatar, name, status, email} = props
-
+    const {setLoading} = useContactListContext()
     function handleChat() {
 
     }
@@ -21,6 +22,7 @@ export default function ContactEntry(props:Props) {
         ContactAgent.removeContact(email)
             .then(response=>{
                 console.log(response)
+                setLoading(true)
             })
             .catch(response=>{
                 console.error(response.error)
