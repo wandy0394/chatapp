@@ -22,6 +22,7 @@ export default function ChatInput() {
                 timestamp:(new Date().toJSON())
             }
             socket.emit("message", message)
+            setMessageContent('')
         }
     }
 

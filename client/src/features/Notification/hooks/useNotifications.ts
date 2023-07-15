@@ -6,7 +6,7 @@ type Props = {
     setLoading:React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const URL = 'http://192.168.0.128:4040/notifications'
+const URL = 'http://192.168.0.128:8080/notifications'
 
 export default function useNotifications(props:Props) {
     const {setLoading} = props

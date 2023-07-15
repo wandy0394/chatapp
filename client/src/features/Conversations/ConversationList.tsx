@@ -1,12 +1,7 @@
 import { useState } from "react"
-import { Contact } from "../ContactList/ContactList"
-import ChatEntry from "./ChatEntry"
+import useConversations from "./hooks/useConversations"
+import Conversation from "./Conversation"
 
-type Chat = {
-    uuid:string,
-    name:string,
-    members:Contact[]
-}
 
 const DUMMY_CHATS = [
     {uuid:'1', name:'Food', members:[]},
@@ -14,8 +9,9 @@ const DUMMY_CHATS = [
     {uuid:'3', name:'Musicals', members:[]},
 ]
 
-export default function Conversations() {
-    const [chats, setChats] = useState<Chat[]>(DUMMY_CHATS)
+export default function ConversationList() {
+    // const [chats, setChats] = useState<Chat[]>(DUMMY_CHATS)
+    const {conversationList, createPublicConversation, getPublicConversations} = useConversations()
     const [collapsed, setCollapsed] = useState<boolean>(false)
     return (
         <div className='w-full h-full flex flex-col gap-2 justify-start items-center border border-yellow-400 select-none'>
@@ -26,12 +22,14 @@ export default function Conversations() {
                 >
                     Conversations
                 </span>
+                <div className='btn btn-primary btn-xs h-10 aspect-square' onClick={createPublicConversation}><p>New</p></div>
+                <div className='btn btn-secondary btn-xs h-10 aspect-square' onClick={getPublicConversations}><p>Refresh</p></div>
             </div>
             <div className="w-full flex flex-col gap-4 px-4" style={{visibility:collapsed?'hidden':'visible'}}> 
                 {
-                    chats.map((contact) => {
+                    conversationList.map((conversation) => {
                         return (
-                            <ChatEntry key={contact.uuid} name={contact.name}/>
+                            <Conversation key={conversation.id} name={conversation.name}/>
                         )
                     })
                 }

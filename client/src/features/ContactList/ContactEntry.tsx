@@ -43,7 +43,6 @@ export default function ContactEntry(props:Props) {
                 <div className='flex items-center gap-4'>
                     <div className={`text-sm ${status === 'PENDING' ? 'block text-yellow-500' :'hidden'}`}>{status}</div>
                     <div className='dropdown dropdown-right'>
-                        {/* <div className='rounded-full aspect-square hover:bg-base-100 w-10 flex items-center justify-center' onClick={handleMenuClick}>&#8942;</div> */}
                         <label tabIndex={0} className="rounded-full aspect-square hover:bg-base-100 w-10 flex items-center justify-center">&#8942;</label>
                         <ul tabIndex={0} className="dropdown-content z-[1] shadow bg-base-100 rounded border border-solid border-gray-500 ">
                             <ContactEntryMenu canChat={status==='PENDING'?false:true} handleChat={handleChat} handleRemove={handleRemove}/>

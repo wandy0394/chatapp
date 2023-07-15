@@ -1,6 +1,6 @@
 import app from './server'
 import dotenv from 'dotenv'
-import {httpServer} from './server'
+import {httpServer} from './chat-server'
 import mysql, {Connection}  from 'mysql2'
 import UserService from './services/userService'
 import ContactListService from './services/contactListService'

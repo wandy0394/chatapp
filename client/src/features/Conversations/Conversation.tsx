@@ -1,11 +1,11 @@
-import { Contact } from "../ContactList/ContactList"
+import { Contact } from "../ContactList/types/types"
 
 type Props = {
     name:string
     members?:Contact[]
 }
 
-export default function ChatEntry(props:Props) {
+export default function Conversation(props:Props) {
     const {name} = props
     function handleDeleteClick() {
 
