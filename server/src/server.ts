@@ -41,7 +41,7 @@ app.use(sessions({
 }))
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/contactList', contactListRouter)
-app.use('/notifications', notificationRouter)
+app.use('/api/v1/notifications', notificationRouter)
 app.use("*", (req:Request, res:Response) => {
     res.status(404).json({error:'Invalid endpoint url'})
 })
