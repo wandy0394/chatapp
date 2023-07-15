@@ -8,6 +8,7 @@ type ContextType = {
     currentConversation:Conversation | null, 
     createPublicConversation:()=>void, 
     conversationList:Conversation[],
+    setConversationList:React.Dispatch<React.SetStateAction<Conversation[]>>
     getPublicConversations:()=>void,
     joinRoom: (roomId:string)=>void
 
@@ -17,6 +18,7 @@ export const ConversationContext = createContext<ContextType>({
     currentConversation: null, 
     createPublicConversation:Function.prototype(), 
     conversationList: [],
+    setConversationList:Function.prototype(),
     getPublicConversations: Function.prototype(), 
     joinRoom:Function.prototype(), 
 })
@@ -48,7 +50,8 @@ export const ConversationContextProvider = ({children}:any) => {
         const msgData = JSON.parse(msg.content) 
         const conv:Conversation = {
             id:msgData.id,
-            name:msgData.name
+            name:msgData.name,
+            hasUnreadMessages:false
         }
         setCurrentConversation(conv)
     }
@@ -57,7 +60,8 @@ export const ConversationContextProvider = ({children}:any) => {
         console.log(msg)
         const newConversation:Conversation = {
             id:JSON.parse(msg.content).id,
-            name:JSON.parse(msg.content).name
+            name:JSON.parse(msg.content).name,
+            hasUnreadMessages:false
         }
         setConversationList(prev=>[...prev, newConversation])
     }
@@ -69,7 +73,8 @@ export const ConversationContextProvider = ({children}:any) => {
         newConversations =  Object.keys(msgContent).map(key=>{
             return {
                 id:key,
-                name:msgContent[key]
+                name:msgContent[key],
+                hasUnreadMessages:false
             }
         })
         setConversationList(newConversations)
@@ -94,6 +99,7 @@ export const ConversationContextProvider = ({children}:any) => {
             value ={{
                 currentConversation,
                 conversationList,
+                setConversationList,
                 joinRoom,
                 getPublicConversations,
                 createPublicConversation

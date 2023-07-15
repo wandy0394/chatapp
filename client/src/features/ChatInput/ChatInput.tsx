@@ -5,7 +5,11 @@ import { User } from "../Authentication/AuthContext"
 import { Message } from "../ChatMessages/types"
 import { useConversationContext } from "../Conversations/hooks/useConversationContext"
 
-export default function ChatInput() {
+type Props ={
+    appendMessage:(message:Message) => void
+}
+export default function ChatInput(props:Props) {
+    const {appendMessage} = props
     const [messageContent, setMessageContent] = useState<string>('')
     const {user} = useAuthContext()
     const {currentConversation} = useConversationContext()
@@ -25,6 +29,7 @@ export default function ChatInput() {
                 conversationRoomId:currentConversation?.id
             }
             socket.emit("message", message)
+            appendMessage(message)
             setMessageContent('')
         }
     }

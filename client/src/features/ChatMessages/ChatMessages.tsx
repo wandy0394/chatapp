@@ -10,9 +10,12 @@ function parseMessage(msg:Message):Message {
 
     return msg
 }
-
-export default function ChatMessages() {
-    const {messages, setMessages} = useChat()
+type Props = {
+    messages:Message[],
+    setMessages: React.Dispatch<React.SetStateAction<Message[]>>
+}
+export default function ChatMessages(props:Props) {
+    const {messages, setMessages} = props
     const {user} = useAuthContext()
     const {currentConversation} = useConversationContext()
 

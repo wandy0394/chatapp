@@ -1,3 +1,4 @@
+import { useConversationContext } from "./hooks/useConversationContext"
 import { Conversation } from "./types"
 
 type Props = {
@@ -7,12 +8,25 @@ type Props = {
 
 export default function ConversationListItem(props:Props) {
     const {conversation, joinRoom} = props
+    const {currentConversation, conversationList, setConversationList} = useConversationContext()
+
     function handleDeleteClick() {
 
     }
 
     function handleClick() {
         joinRoom(conversation.id)
+        const newConversationList:Conversation[] = conversationList.map(conv => {
+            if (conv.id === conversation.id) {
+                return {
+                    id:conv.id,
+                    name:conv.name,
+                    hasUnreadMessages:false
+                }
+            }
+            return conv
+        })
+        setConversationList(newConversationList)
     }
     return (
         <div 
@@ -20,7 +34,10 @@ export default function ConversationListItem(props:Props) {
             onClick={handleClick}
         >
            
-            <label className="text-xl flex flex-col justify-center">{conversation.name}</label>
+            <label className="text-xl flex gap-8 items-baseline justify-center">
+                <label>{conversation.name}</label>
+                <label className={`text-sm bg-info text-black rounded-full px-2 ${conversation.hasUnreadMessages ? 'block' : 'hidden'}`}>NEW</label>
+            </label>
             <label 
                 className="text-xl aspect-square w-6 rounded items-center justify-center hidden group-hover:flex group-hover:flex-col hover:bg-error hover:cursor-pointer"
                 onClick={()=>handleDeleteClick()}
