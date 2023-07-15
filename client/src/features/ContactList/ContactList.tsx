@@ -31,9 +31,9 @@ export default function ContactList() {
             </div>
             <div className="w-full flex flex-col gap-4 px-4 py-4" style={{visibility:collapsed?'hidden':'visible'}}> 
                 {
-                    contacts.map((contact) => {
+                    contacts.map((contact, index) => {
                         return (
-                            <ContactEntry key={contact.uuid} name={contact.username} avatar={contact.avatar} status={contact.status} email={contact.email}/>
+                            <ContactEntry key={index} name={contact.username} avatar={contact.avatar} status={contact.status} email={contact.email}/>
                         )
                     })
                 }

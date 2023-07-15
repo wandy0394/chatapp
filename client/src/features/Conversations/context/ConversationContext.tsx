@@ -1,15 +1,28 @@
-import { useState, useEffect } from "react"
+import { createContext, useState, useEffect } from "react"
 import { socket } from "../../../services/chat-service"
 import { Message } from "../../ChatMessages/types"
 import { Conversation } from "../types"
 
-function parseMessage(msg:Message):Message {
-    return msg
+type ContextType = {
+    currentConversation:Conversation | null, 
+    createPublicConversation:()=>void, 
+    conversationList:Conversation[],
+    getPublicConversations:()=>void,
+    joinRoom: (roomId:string)=>void
+
 }
 
-export default function useConversations() {
+export const ConversationContext = createContext<ContextType>({
+    currentConversation: null, 
+    createPublicConversation:Function.prototype(), 
+    conversationList: [],
+    getPublicConversations: Function.prototype(), 
+    joinRoom:(roomId:string)=>Function.prototype(), 
+})
+
+export const ConversationContextProvider = ({children}:any) => {
     const [conversationList, setConversationList] = useState<Conversation[]>([])
-    const [currentConversation, setCurrentConversation] = useState<string>('')
+    const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
 
     function joinRoom(roomId:string) {
@@ -34,7 +47,12 @@ export default function useConversations() {
 
         socket.on('joinRoom', (msg:Message)=>{
             console.log(msg)
-            setCurrentConversation(msg.content)
+            const msgData = JSON.parse(msg.content) 
+            const conv:Conversation = {
+                id:msgData.id,
+                name:msgData.name
+            }
+            setCurrentConversation(conv)
         })
         
 
@@ -69,5 +87,17 @@ export default function useConversations() {
         }
     }, [])
 
-    return {currentConversation, createPublicConversation, conversationList, getPublicConversations, joinRoom}
+    return (
+        <ConversationContext.Provider 
+            value ={{
+                currentConversation,
+                conversationList,
+                joinRoom,
+                getPublicConversations,
+                createPublicConversation
+            }}
+        >
+            {children}
+        </ConversationContext.Provider>
+    )
 }

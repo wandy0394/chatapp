@@ -12,5 +12,11 @@ export type Message = {
 export type ChatMessage = {
     author:User,
     content:string,
+    timestamp:string,
+    conversationRoomId:string
+}
+
+export type SystemMessage = {
+    content:string,
     timestamp:string
 }

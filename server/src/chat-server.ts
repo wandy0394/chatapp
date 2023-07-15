@@ -2,21 +2,24 @@ import express, { Express, Request, Response } from 'express'
 import { Server as SocketServer} from "socket.io"
 import {createServer} from "http"
 import dotenv from 'dotenv'
-import { ChatMessage } from './types/message'
+import { ChatMessage, SystemMessage } from './types/message'
 import {v4 as uuidv4} from 'uuid'
 import { User } from './types/user'
 
 dotenv.config()
 type ServerToClientEvents = {
     message:(msg:ChatMessage) => void
-    createPublicConversation: (msg:ChatMessage) => void
-    getPublicConversations: (msg:ChatMessage) => void
+    createPublicConversation: (msg:SystemMessage) => void
+    getPublicConversations: (msg:SystemMessage) => void
+    joinRoom: (msg:SystemMessage) => void
+
 }
 
 type ClientToServerEvents = {
     message:(msg:ChatMessage) => void
     createPublicConversation: (socketId:string) => void
     getPublicConversations: () => void
+    joinRoom: (roomId:string) => void
 }
 
 
@@ -42,9 +45,12 @@ const SYSTEM:User = {
 }
 io.on("connection", (socket)=>{
     console.log(`connected with ${socket.id}`)
+    
     socket.on("message", (message:ChatMessage)=>{
         console.log(`Received message: ${message.content}`)
-        io.emit("message", message)
+        if (socket.rooms.has(message.conversationRoomId)) {
+            io.to(message.conversationRoomId).emit("message", message)
+        }
     })
 
     socket.on("createPublicConversation", (message) => {
@@ -53,8 +59,7 @@ io.on("connection", (socket)=>{
         const name='Test ' + Math.floor(Math.random() * 100)
         rooms[newRoomId] = name
         console.log(rooms)
-        const msg:ChatMessage = {
-            author:SYSTEM,
+        const msg:SystemMessage = {
             content:JSON.stringify({id:newRoomId, name:name}),
             timestamp: (new Date().toJSON())
         }
@@ -62,28 +67,25 @@ io.on("connection", (socket)=>{
     })
 
     socket.on('getPublicConversations', ()=>{
-        const msg:ChatMessage = {
-            author:SYSTEM,
+        const msg:SystemMessage = {
             content:JSON.stringify(rooms),
             timestamp: (new Date().toJSON())
         }
         socket.emit('getPublicConversations', msg)
     })
 
-    // socket.on("create-room", (room)=>{
+    socket.on('joinRoom', (roomId:string)=>{
+        if (roomId in rooms) {
+            console.log(`${socket.id} joined room ${roomId}`)
+            socket.join(roomId)
+        }
+        socket.emit('joinRoom', {
+            content:JSON.stringify({id:roomId, name:rooms[roomId]}),
+            timestamp:(new Date().toJSON())
+        })
 
-    // })
+    })
 
-    // socket.on("change-room", (room)=>{
-        
-    // })
-
-    // socket.on("join-room", (room, id)=>{
-        
-    // })
-    // socket.on("leave-room", (room, id)=>{
-        
-    // })
 })
 
 

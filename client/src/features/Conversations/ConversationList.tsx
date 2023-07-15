@@ -1,6 +1,7 @@
 import { useState } from "react"
 import useConversations from "./hooks/useConversations"
-import Conversation from "./Conversation"
+import ConversationListItem from "./ConversationListItem"
+import { useConversationContext } from "./hooks/useConversationContext"
 
 
 const DUMMY_CHATS = [
@@ -10,9 +11,11 @@ const DUMMY_CHATS = [
 ]
 
 export default function ConversationList() {
-    // const [chats, setChats] = useState<Chat[]>(DUMMY_CHATS)
-    const {conversationList, createPublicConversation, getPublicConversations} = useConversations()
+    const {conversationList, createPublicConversation, getPublicConversations, joinRoom} = useConversationContext()
+
     const [collapsed, setCollapsed] = useState<boolean>(false)
+
+    
     return (
         <div className='w-full h-full flex flex-col gap-2 justify-start items-center border border-yellow-400 select-none'>
             <div className="px-4 py-2 w-full flex justify-between items-center gap-4 bg-base-200 hover:bg-base-300" >
@@ -29,7 +32,11 @@ export default function ConversationList() {
                 {
                     conversationList.map((conversation) => {
                         return (
-                            <Conversation key={conversation.id} name={conversation.name}/>
+                            <ConversationListItem 
+                                key={conversation.id} 
+                                conversation={conversation}
+                                joinRoom={joinRoom}
+                            />
                         )
                     })
                 }

@@ -3,13 +3,15 @@ import { socket } from "../../services/chat-service"
 import { useAuthContext } from "../Authentication/hooks/useAuthContext"
 import { User } from "../Authentication/AuthContext"
 import { Message } from "../ChatMessages/types"
+import { useConversationContext } from "../Conversations/hooks/useConversationContext"
 
 export default function ChatInput() {
     const [messageContent, setMessageContent] = useState<string>('')
     const {user} = useAuthContext()
+    const {currentConversation} = useConversationContext()
 
     function handleSendMessage() {
-        if (socket.connected && user) {
+        if (socket.connected && user && currentConversation) {
             let author:User = {
                 username:user.username,
                 email:user.email,
@@ -19,7 +21,8 @@ export default function ChatInput() {
             let message:Message = {
                 author:author,
                 content:messageContent,
-                timestamp:(new Date().toJSON())
+                timestamp:(new Date().toJSON()),
+                conversationRoomId:currentConversation?.id
             }
             socket.emit("message", message)
             setMessageContent('')
