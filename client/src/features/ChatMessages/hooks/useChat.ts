@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
-import { socket } from "../../../services/chat-service"
 import { Message } from "../types"
-
+import { useAuthContext } from "../../Authentication/hooks/useAuthContext"
+import { ChatService } from "../../../services/chat-service"
 function parseMessage(msg:Message):Message {
     return msg
 }
@@ -10,21 +10,22 @@ export default function useChat() {
 
     const [messages, setMessages] = useState<Message[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const {user} = useAuthContext()
 
 
+    const messageLisener = (msg:Message) => {
+        console.log(msg)
+        setMessages((state)=>[...state, parseMessage(msg)])
+    }
 
     useEffect(()=>{
-        // socket.connect();
-        socket.on("message", (msg:Message)=>{
-            console.log(msg)
-            setMessages((state)=>[...state, parseMessage(msg)])
-        })
-
+        if (user === null) return
+        ChatService.listenOnMessage(messageLisener)
 
         return ()=>{
-            socket.off("message")
+            ChatService.removeMessageListener(messageLisener)
         }
-    }, [])
+    }, [user])
 
     return {messages, setMessages}
 }

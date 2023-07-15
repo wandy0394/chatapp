@@ -1,4 +1,4 @@
-import { Message } from "../features/ChatMessages/types"
+import { Message } from "../../features/ChatMessages/types"
 
 export type ServerToClientEvents = {
     joinRoom: (msg:Message) => void

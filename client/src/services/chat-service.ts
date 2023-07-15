@@ -1,6 +1,15 @@
-import {Socket, io} from "socket.io-client"
-import { ClientToServerEvents, ServerToClientEvents } from "./types"
-// const socket = io("http://localhost:4040")
-const socket:Socket<ServerToClientEvents, ClientToServerEvents> = io("http://192.168.0.128:4040")
+import { Message } from "../features/ChatMessages/types";
+import { webSocket as socket } from "./util/socket";
 
-export {socket}
+export class ChatService {
+    static listenOnMessage(callback:(msg:Message)=>void) {
+        socket.on("message", callback)
+    }
+
+    static removeMessageListener(callback:any) {
+        socket.off("message", callback)
+    }
+
+}
+
+

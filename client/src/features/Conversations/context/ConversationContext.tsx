@@ -1,7 +1,8 @@
 import { createContext, useState, useEffect } from "react"
-import { socket } from "../../../services/chat-service"
 import { Message } from "../../ChatMessages/types"
 import { Conversation } from "../types"
+import { ConversationService } from "../../../services/conversation-service"
+import { useAuthContext } from "../../Authentication/hooks/useAuthContext"
 
 type ContextType = {
     currentConversation:Conversation | null, 
@@ -17,75 +18,76 @@ export const ConversationContext = createContext<ContextType>({
     createPublicConversation:Function.prototype(), 
     conversationList: [],
     getPublicConversations: Function.prototype(), 
-    joinRoom:(roomId:string)=>Function.prototype(), 
+    joinRoom:Function.prototype(), 
 })
+
 
 export const ConversationContextProvider = ({children}:any) => {
     const [conversationList, setConversationList] = useState<Conversation[]>([])
     const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
+    const {user} = useAuthContext()
 
     function joinRoom(roomId:string) {
-        if (socket.connected) {
-            socket.emit('joinRoom', roomId)
-        }
+        if (user === null) return
+        ConversationService.requestJoinRoom(roomId)
     }
 
     function createPublicConversation() {
-        if (socket.connected) {
-            socket.emit('createPublicConversation', socket.id)
-        }
+        if (user === null) return
+        ConversationService.createPublicConversation()
     }
 
     function getPublicConversations() {
-        socket.emit('getPublicConversations')
+        if (user === null) return
+        ConversationService.requestPublicConversations()
     }
     
+    const joinRoomListener = (msg:Message) => {
+        console.log(msg)
+        const msgData = JSON.parse(msg.content) 
+        const conv:Conversation = {
+            id:msgData.id,
+            name:msgData.name
+        }
+        setCurrentConversation(conv)
+    }
+
+    const createPublicConversationListener = (msg:Message) => {
+        console.log(msg)
+        const newConversation:Conversation = {
+            id:JSON.parse(msg.content).id,
+            name:JSON.parse(msg.content).name
+        }
+        setConversationList(prev=>[...prev, newConversation])
+    }
+
+    const getPublicConversationsListener = (msg:Message) => {
+        console.log(JSON.parse(msg.content))
+        let msgContent = JSON.parse(msg.content)
+        let newConversations:Conversation[] = []
+        newConversations =  Object.keys(msgContent).map(key=>{
+            return {
+                id:key,
+                name:msgContent[key]
+            }
+        })
+        setConversationList(newConversations)
+    }
 
     useEffect(()=>{
-        // socket.connect();
-
-        socket.on('joinRoom', (msg:Message)=>{
-            console.log(msg)
-            const msgData = JSON.parse(msg.content) 
-            const conv:Conversation = {
-                id:msgData.id,
-                name:msgData.name
-            }
-            setCurrentConversation(conv)
-        })
+        if (user === null) return
+        ConversationService.listenOnJoinRoom(joinRoomListener)
+        ConversationService.listenOnCreatePublicConversation(createPublicConversationListener)
+        ConversationService.listenOnGetPublicConversations(getPublicConversationsListener)
+        ConversationService.requestPublicConversations()
         
-
-        socket.on('createPublicConversation', (msg:Message)=>{
-            console.log(msg)
-            const newConversation:Conversation = {
-                id:JSON.parse(msg.content).id,
-                name:JSON.parse(msg.content).name
-            }
-            setConversationList(prev=>[...prev, newConversation])
-        })
-
-        socket.on('getPublicConversations', (msg:Message) => {
-            console.log(JSON.parse(msg.content))
-            let msgContent = JSON.parse(msg.content)
-            let newConversations:Conversation[] = []
-            newConversations =  Object.keys(msgContent).map(key=>{
-                return {
-                    id:key,
-                    name:msgContent[key]
-                }
-            })
-            setConversationList(newConversations)
-        })
-
-        socket.emit('getPublicConversations')
         return ()=>{
-            socket.off("message")
-            socket.off("createPublicConversation")
-            socket.off('getPublicConversations')
-            socket.off('joinRoom')
+            ConversationService.removeJoinRoomListener(joinRoomListener)
+            ConversationService.removeCreatePublicConversationListener(createPublicConversationListener)
+            ConversationService.removeGetPublicConversationsListener(getPublicConversationsListener)
         }
-    }, [])
+    }, [user])
 
     return (
         <ConversationContext.Provider 

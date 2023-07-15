@@ -1,6 +1,5 @@
 import { Message } from "./types"
-import { socket } from "../../services/chat-service"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import ChatBubble from "./ChatBubble"
 import { useAuthContext } from "../Authentication/hooks/useAuthContext"
 import useChat from "./hooks/useChat"
@@ -13,7 +12,6 @@ function parseMessage(msg:Message):Message {
 }
 
 export default function ChatMessages() {
-    // const [messages, setMessages] = useState<Message[]>([])
     const {messages, setMessages} = useChat()
     const {user} = useAuthContext()
     const {currentConversation} = useConversationContext()
