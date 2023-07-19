@@ -1,12 +1,21 @@
 import {Socket} from 'socket.io'
 import {v4 as uuidv4} from 'uuid'
 import { SystemMessage } from '../../types/message'
+import parseCookieHeader from '../../util/parseCookieHeader'
 type Room = {
     [id:string]:string
 }
 
+declare module "http" {
+    interface IncomingMessage {
+        user:any
+    }
+}
+
 let rooms:Room = {}
 const conversationListener = (socket:Socket) => {
+    const user = socket.request.user
+    console.log(user)
     socket.on("createPublicConversation", (message) => {
         console.log(`${message} wants to create a room`)
         const newRoomId = uuidv4()

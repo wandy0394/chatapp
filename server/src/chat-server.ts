@@ -7,6 +7,9 @@ import {v4 as uuidv4} from 'uuid'
 import { User } from './types/user'
 import conversationListener from './v1/listeners/conversationListener'
 import chatListener from './v1/listeners/chatListeners'
+import { sessionMiddleware, wrap } from './middleware/setSessionCookie'
+import parseCookieHeader from './util/parseCookieHeader'
+import requireAuth, { requireAuth2 } from './middleware/requireAuth'
 
 dotenv.config()
 type ServerToClientEvents = {
@@ -30,11 +33,18 @@ const httpServer = createServer(app)
 const io:SocketServer<ClientToServerEvents, ServerToClientEvents> = new SocketServer(httpServer, {
     cors: {
         origin:["http://localhost:5173", "http://192.168.0.128:5173"],
-        methods:["GET", "POST"]
+        methods:["GET", "POST"],
+        credentials:true
     },
     path:'/api/v1/'
 })
 
+// io.engine.use(setSessionCookie())
+// io.use(wrap(sessionMiddleware))
+// io.use((socket, next) => {
+//     console.log(parseCookieHeader(socket.request.headers?.cookie))
+// })
+io.use(wrap(requireAuth2))
 io.on("connection", conversationListener)
 io.on("connection", chatListener)
 

@@ -82,9 +82,9 @@ class SessionsDAO {
                         if (rows.length <= 0) return reject(new Error('No session with sessionid'))
                         resolve({
                             id:rows[0].id,
-                            sessionId:rows[0].sessionID,
+                            sessionId:rows[0].sessionId,
                             email:rows[0].email,
-                            userUUID:rows[0].UserUUID
+                            userUUID:rows[0].userUUID
                         })
                     }
                 })

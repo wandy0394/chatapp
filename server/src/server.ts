@@ -6,6 +6,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import sessions from 'express-session'
 import dotenv from 'dotenv'
+import { sessionMiddleware } from './middleware/setSessionCookie'
 
 dotenv.config()
 
@@ -28,17 +29,7 @@ app.use(cors({
 }))
 app.use(express.json())
 app.use(helmet())
-app.use(sessions({
-    secret:process.env.SESSION_SECRET as string,
-    resave:false,
-    saveUninitialized:false,
-    cookie: {
-        maxAge: 1000*60*60*24*3,
-        sameSite: process.env.NODE_ENV === 'production'?'none':'lax',
-        httpOnly:true,
-        secure: process.env.NODE_ENV === 'production'
-    }
-}))
+app.use(sessionMiddleware)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/contactList', contactListRouter)
 app.use('/api/v1/notifications', notificationRouter)
