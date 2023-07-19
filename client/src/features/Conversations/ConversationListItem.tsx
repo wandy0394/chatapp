@@ -20,7 +20,7 @@ export default function ConversationListItem(props:Props) {
             if (conv.id === conversation.id) {
                 return {
                     id:conv.id,
-                    name:conv.name,
+                    label:conv.label,
                     hasUnreadMessages:false
                 }
             }
@@ -35,7 +35,7 @@ export default function ConversationListItem(props:Props) {
         >
            
             <label className="text-xl flex gap-8 items-baseline justify-center">
-                <label>{conversation.name}</label>
+                <label>{conversation.label}</label>
                 <label className={`text-sm bg-info text-black rounded-full px-2 ${conversation.hasUnreadMessages ? 'block' : 'hidden'}`}>NEW</label>
             </label>
             <label 

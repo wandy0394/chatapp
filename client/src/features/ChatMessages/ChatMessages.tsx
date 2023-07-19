@@ -14,6 +14,7 @@ type Props = {
     messages:Message[],
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>
 }
+
 export default function ChatMessages(props:Props) {
     const {messages, setMessages} = props
     const {user} = useAuthContext()
@@ -30,7 +31,7 @@ export default function ChatMessages(props:Props) {
                 <p>{user && user.email}</p>
                 <p>{user && user.userUUID}</p>
             </span>
-            <span>Current Room: {currentConversation !== null ? currentConversation.name : ''}</span>
+            <span>Current Room: {currentConversation !== null ? currentConversation.label : ''}</span>
             {
                 user &&
                     messages.map((message, index) => {

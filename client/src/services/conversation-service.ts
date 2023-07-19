@@ -16,8 +16,12 @@ export class ConversationService {
     }
 
     static createPublicConversation() {
+        const message = JSON.stringify({
+            label:'TestTest',
+            owner:'12345'
+        })
         if (socket.connected) {
-            socket.emit('createPublicConversation', socket.id)
+            socket.emit('createPublicConversation', message)
         }
     }
 

@@ -4,6 +4,7 @@ import {httpServer} from './chat-server'
 import mysql, {Connection}  from 'mysql2'
 import UserService from './services/userService'
 import ContactListService from './services/contactListService'
+import { ConversationService } from './services/conversationService'
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ connection.connect((err)=>{
     }
     UserService.injectConn(connection)
     ContactListService.injectConn(connection)
+    ConversationService.injectConn(connection)
     UserService.connectionCheck()
 })
 

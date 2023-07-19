@@ -29,7 +29,6 @@ export async function requireAuth2(req:Request, res:Response, next:NextFunction)
     if (!sid) next(new Error('Unauthorised'))
     try {      
         const result = await UserService.getSessionBySessionId(sid)
-        console.log(result)
         if (Object.keys(result).length > 0) {
             req.user = {
                 id:result.id,

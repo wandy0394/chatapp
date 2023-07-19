@@ -1,5 +1,5 @@
 export type Conversation = {
     id:string,
-    name:string,
+    label:string,
     hasUnreadMessages:boolean
 }

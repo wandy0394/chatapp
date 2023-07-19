@@ -50,7 +50,7 @@ export const ConversationContextProvider = ({children}:any) => {
         const msgData = JSON.parse(msg.content) 
         const conv:Conversation = {
             id:msgData.id,
-            name:msgData.name,
+            label:msgData.label,
             hasUnreadMessages:false
         }
         setCurrentConversation(conv)
@@ -60,7 +60,7 @@ export const ConversationContextProvider = ({children}:any) => {
         console.log(msg)
         const newConversation:Conversation = {
             id:JSON.parse(msg.content).id,
-            name:JSON.parse(msg.content).name,
+            label:JSON.parse(msg.content).label,
             hasUnreadMessages:false
         }
         setConversationList(prev=>[...prev, newConversation])
@@ -73,7 +73,7 @@ export const ConversationContextProvider = ({children}:any) => {
         newConversations =  Object.keys(msgContent).map(key=>{
             return {
                 id:key,
-                name:msgContent[key],
+                label:msgContent[key],
                 hasUnreadMessages:false
             }
         })
