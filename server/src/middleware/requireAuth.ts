@@ -19,30 +19,29 @@ export default async function requireAuth(req:Request, res:Response, next:NextFu
     }
     catch(e) {
         console.log(e)
-        if (res instanceof Response)
-            res.status(403).json({status:'error', data:{error:'Unauthorised.'}})
+        res.status(403).json({status:'error', data:{error:'Unauthorised.'}})
     }
 }
 
 export async function requireAuth2(req:Request, res:Response, next:NextFunction) {
 
     const sid = parseCookieHeader(req.headers?.cookie).sid
-    if (!sid) return res.status(403).json({status:'error', data:{error:'Unauthorised.'}})
+    if (!sid) next(new Error('Unauthorised'))
     try {      
         const result = await UserService.getSessionBySessionId(sid)
         console.log(result)
         if (Object.keys(result).length > 0) {
-            req.user = {}
-            req.user.id= result.id
-            req.user.email=result.email
-            req.user.sessionID=sid
+            req.user = {
+                id:result.id,
+                email:result.email,
+                sessionID:sid
+            }
         }
         next()
     }
     catch(e) {
         console.log(e)
-        if (res instanceof Response)
-            res.status(403).json({status:'error', data:{error:'Unauthorised.'}})
+        next(new Error('Unauthorised'))
     }
 }
 

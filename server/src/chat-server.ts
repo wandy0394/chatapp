@@ -1,15 +1,12 @@
-import express, { Express, Request, Response } from 'express'
+import express, { Express } from 'express'
 import { Server as SocketServer} from "socket.io"
 import {createServer} from "http"
 import dotenv from 'dotenv'
 import { ChatMessage, SystemMessage } from './types/message'
-import {v4 as uuidv4} from 'uuid'
-import { User } from './types/user'
 import conversationListener from './v1/listeners/conversationListener'
 import chatListener from './v1/listeners/chatListeners'
-import { sessionMiddleware, wrap } from './middleware/setSessionCookie'
-import parseCookieHeader from './util/parseCookieHeader'
-import requireAuth, { requireAuth2 } from './middleware/requireAuth'
+import {  wrap } from './middleware/sessionMiddleware'
+import  { requireAuth2 } from './middleware/requireAuth'
 
 dotenv.config()
 type ServerToClientEvents = {
@@ -39,11 +36,7 @@ const io:SocketServer<ClientToServerEvents, ServerToClientEvents> = new SocketSe
     path:'/api/v1/'
 })
 
-// io.engine.use(setSessionCookie())
-// io.use(wrap(sessionMiddleware))
-// io.use((socket, next) => {
-//     console.log(parseCookieHeader(socket.request.headers?.cookie))
-// })
+
 io.use(wrap(requireAuth2))
 io.on("connection", conversationListener)
 io.on("connection", chatListener)

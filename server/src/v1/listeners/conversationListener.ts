@@ -8,7 +8,11 @@ type Room = {
 
 declare module "http" {
     interface IncomingMessage {
-        user:any
+        user: {
+            id:number, 
+            email:string,
+            sessionID:string
+        }
     }
 }
 

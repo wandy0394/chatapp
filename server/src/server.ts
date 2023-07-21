@@ -6,7 +6,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import sessions from 'express-session'
 import dotenv from 'dotenv'
-import { sessionMiddleware } from './middleware/setSessionCookie'
+import { sessionMiddleware } from './middleware/sessionMiddleware'
 
 dotenv.config()
 
