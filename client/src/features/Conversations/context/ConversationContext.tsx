@@ -71,9 +71,10 @@ export const ConversationContextProvider = ({children}:any) => {
         let msgContent = JSON.parse(msg.content)
         let newConversations:Conversation[] = []
         newConversations =  Object.keys(msgContent).map(key=>{
+            console.log(msgContent[key].uuid)
             return {
-                id:key,
-                label:msgContent[key],
+                id:msgContent[key].uuid,
+                label:msgContent[key].label,
                 hasUnreadMessages:false
             }
         })

@@ -31,7 +31,6 @@ export async function requireAuth2(req:Request, res:Response, next:NextFunction)
         const result = await UserService.getSessionBySessionId(sid)
         if (Object.keys(result).length > 0) {
             req.user = {
-                id:result.id,
                 email:result.email,
                 sessionID:sid
             }

@@ -32,6 +32,7 @@ export default function ChatMessages(props:Props) {
                 <p>{user && user.userUUID}</p>
             </span>
             <span>Current Room: {currentConversation !== null ? currentConversation.label : ''}</span>
+            <span>Current Room UUID: {currentConversation !== null ? currentConversation.id : ''}</span>
             {
                 user &&
                     messages.map((message, index) => {

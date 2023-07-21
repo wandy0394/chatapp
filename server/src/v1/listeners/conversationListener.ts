@@ -11,7 +11,6 @@ type Room = {
 declare module "http" {
     interface IncomingMessage {
         user: {
-            id:number, 
             email:string,
             sessionID:string
         },       
@@ -21,10 +20,9 @@ declare module "http" {
 let rooms:Room = {}
 const conversationListener = (socket:Socket) => {
     const user = socket.request.user
-    if (user) {
-        console.log('user id is ' + user.id)
-        ConversationService.createPublicConversation(socket, user.id)
-    }
+    if (user === null || user === undefined) return
+    console.log('user email is ' + user.email)
+    ConversationService.createPublicConversation(socket, user.email)
 
     // socket.on("createPublicConversation", (message) => {
     //     console.log(`${message} wants to create a room`)
@@ -39,25 +37,26 @@ const conversationListener = (socket:Socket) => {
     //     socket.emit("createPublicConversation", msg)
     // })
 
-    socket.on('getPublicConversations', ()=>{
-        const msg:SystemMessage = {
-            content:JSON.stringify(rooms),
-            timestamp: (new Date().toJSON())
-        }
-        socket.emit('getPublicConversations', msg)
-    })
+    ConversationService.getConversationByUserId(socket, user.email)
+    // socket.on('getPublicConversations', ()=>{
+    //     const msg:SystemMessage = {
+    //         content:JSON.stringify(rooms),
+    //         timestamp: (new Date().toJSON())
+    //     }
+    //     socket.emit('getPublicConversations', msg)
+    // })
 
-    socket.on('joinRoom', (roomId:string)=>{
-        if (roomId in rooms) {
-            console.log(`${socket.id} joined room ${roomId}`)
-            socket.join(roomId)
-        }
-        socket.emit('joinRoom', {
-            content:JSON.stringify({id:roomId, name:rooms[roomId]}),
-            timestamp:(new Date().toJSON())
-        })
+    ConversationService.joinRoom(socket)
+    // socket.on('joinRoom', (conversationUUID:string)=>{
+    //     console.log(conversationUUID)
+    //     console.log(`${socket.id} joined room ${roomId}`)
+    //     socket.join(roomId)
+    //     // socket.emit('joinRoom', {
+    //     //     content:JSON.stringify({id:roomId, name:rooms[roomId]}),
+    //     //     timestamp:(new Date().toJSON())
+    //     // })
 
-    })
+    // })
 }
 
 export default conversationListener
