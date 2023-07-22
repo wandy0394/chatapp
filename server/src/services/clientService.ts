@@ -67,6 +67,14 @@ class ClientService {
         }
     }
 
+    static getSocketIdsByEmail(email:string):string[] {
+        const output:string[] = []
+        Object.values(clients).forEach(client=>{
+            if (client.email === email) output.push(client.socketId)
+        })
+        return output
+    }
+
 }
 
 export default ClientService

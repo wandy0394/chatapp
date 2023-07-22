@@ -2,6 +2,12 @@ import {Connection, ResultSetHeader, RowDataPacket} from 'mysql2'
 import { Conversation } from '../types/conversation'
 
 
+export const STATUS = {
+    USER_INVITED:"USER_INVITED",
+    USER_JOINED:"USER_JOINED",
+    USER_LEFT:"USER_LEFT"
+}
+
 let db:Connection
 class ConversationDAO {
     static initDb(newDb:Connection) {
@@ -40,12 +46,12 @@ class ConversationDAO {
         return promise
     }
 
-    static async addUserToConversation(userId:number, conversationId:number) {
+    static async addUserToConversation(userId:number, conversationId:number, status:string) {
         const promise = new Promise<void>((resolve, reject) => {
             try {
-                const sqlQuery = `INSERT into UserConversations (UserId, ConversationId)
-                                    VALUES (?, ?)`
-                db.query(sqlQuery, [userId, conversationId], (err, result, fields) => {
+                const sqlQuery = `INSERT into UserConversations (UserId, ConversationId, Status)
+                                    VALUES (?, ?, ?)`
+                db.query(sqlQuery, [userId, conversationId, status], (err, result, fields) => {
                     if (err) {
                         console.error(err)
                         reject (new Error('Error querying database'))
@@ -99,8 +105,8 @@ class ConversationDAO {
                 const sqlQuery = `SELECT c.id, c.uuid, c.label 
                                     FROM Conversations c join UserConversations u 
                                     ON c.id=u.ConversationId 
-                                    WHERE u.UserId=?`
-                db.query(sqlQuery, [userId], (err, result, fields) => {
+                                    WHERE u.UserId=? and Status=?`
+                db.query(sqlQuery, [userId, STATUS.USER_JOINED], (err, result, fields) => {
                     if (err) {
                         console.error(err)
                         reject (new Error('Error querying database'))
@@ -158,6 +164,28 @@ class ConversationDAO {
             }
         })
         return promise   
+    }
+
+    static async updateUserConversationStatus(status:string, conversationId:number, userId:number) {
+        const promise = new Promise<void>((resolve, reject) => {
+            try {
+                const sqlQuery = `UPDATE UserConversations SET Status = ? WHERE ConversationId = ? and UserId = ?`
+                db.query(sqlQuery, [status, conversationId, userId], (err, result, fields) => {
+                    if (err) {
+                        console.error(err)
+                        reject (new Error('Error querying database'))
+                    }
+                    else {
+                        resolve()
+                    }
+                })
+            }
+            catch (e) {
+                console.error(e)
+                reject(e)
+            }
+        })
+        return promise          
     }
 }
 

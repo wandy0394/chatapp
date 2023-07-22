@@ -31,7 +31,7 @@ export default function ConversationListItem(props:Props) {
     }
 
     function filterLabel(label:string) {
-        if (user) {
+        if (user && label) {
             const labels:string = label.split(',').filter(l=>l!==user.username).join(',')
             return labels
         }

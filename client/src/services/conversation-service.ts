@@ -44,4 +44,8 @@ export class ConversationService {
     static removeGetPublicConversationsListener(callback:any) {
         socket.off('getPublicConversations', callback)
     }
+
+    static listenOnConversationInvitation(callback:any) {
+        socket.on('conversationInvitation', callback)
+    }
 }

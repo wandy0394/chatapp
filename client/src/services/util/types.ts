@@ -5,6 +5,7 @@ export type ServerToClientEvents = {
     message: (msg:Message) => void
     createPublicConversation: (msg:Message) => void
     getPublicConversations:(msg:Message) => void
+    conversationInvitation: (msg:Message) => void
 }
 
 export type ClientToServerEvents = {

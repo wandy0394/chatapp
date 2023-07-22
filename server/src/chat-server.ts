@@ -15,7 +15,7 @@ type ServerToClientEvents = {
     createPublicConversation: (msg:SystemMessage) => void
     getPublicConversations: (msg:SystemMessage) => void
     joinRoom: (msg:SystemMessage) => void
-
+    conversationInvitation: (msg:SystemMessage) => void
 }
 
 type ClientToServerEvents = {
@@ -28,7 +28,7 @@ type ClientToServerEvents = {
 
 const app:Express = express()
 const httpServer = createServer(app)
-const io:SocketServer<ClientToServerEvents, ServerToClientEvents> = new SocketServer(httpServer, {
+export const io:SocketServer<ClientToServerEvents, ServerToClientEvents> = new SocketServer(httpServer, {
     cors: {
         origin:["http://localhost:5173", "http://192.168.0.128:5173"],
         methods:["GET", "POST"],

@@ -22,7 +22,7 @@ const conversationListener = (socket:Socket) => {
 
     ConversationService.createPublicConversation(socket, user.email)
     ConversationService.getConversationByUserId(socket, user.email)
-    ConversationService.joinRoom(socket)
+    ConversationService.joinRoom(socket, user.email)
 }
 
 export default conversationListener

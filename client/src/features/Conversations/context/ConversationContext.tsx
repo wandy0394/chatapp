@@ -81,12 +81,25 @@ export const ConversationContextProvider = ({children}:any) => {
         setConversationList(newConversations)
     }
 
+    const conversationInvitationListener = (msg:Message) => {
+        console.log(JSON.parse(msg.content))
+        let msgContent = JSON.parse(msg.content)
+        let newConversation:Conversation = {
+            id:msgContent.id,
+            label:msgContent.label,
+            hasUnreadMessages:true
+        }
+        console.log(newConversation)
+        setConversationList(prev=>[...conversationList, newConversation])        
+    }
+
     useEffect(()=>{
         if (user === null) return
         ConversationService.listenOnJoinRoom(joinRoomListener)
         ConversationService.listenOnCreatePublicConversation(createPublicConversationListener)
         ConversationService.listenOnGetPublicConversations(getPublicConversationsListener)
         ConversationService.requestPublicConversations()
+        ConversationService.listenOnConversationInvitation(conversationInvitationListener)
         
         return ()=>{
             ConversationService.removeJoinRoomListener(joinRoomListener)
