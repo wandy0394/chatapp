@@ -15,10 +15,38 @@ export class ConversationService {
         ConversationDAO.initDb(conn)
     }
 
-    static registerClient(sessionId:string, socketId:string, userUUID:string, email:string) {
-        //TODO: validation checks
-        
+    static handleInvitation(socket:Socket, userEmail:string) {
+        //invite user into conversation
+        socket.on('conversationInvitation', async (conversationUUID:string)=>{
+            console.log('recieved invitation request')
+            
+            try {
+                //get user objects for all participants
+                const user = await UserService.getUser(userEmail)
+                const conversation = await ConversationDAO.getConversationByUUID(conversationUUID)
+                const users = await ConversationDAO.getUsersByConversationId(conversation[0].id)
+                //update status from invited to joined
+                await ConversationDAO.updateUserConversationStatus(STATUS.USER_JOINED, conversation[0].id, user.id)
+                //setup message that includes memberUUIDs etc
+                const msg:SystemMessage = {
+                    content:JSON.stringify({
+                        uuid:conversationUUID, 
+                        label:users.map(u=>u.username).join(','),
+                        memberUUIDs:users.map(u=>u.userUUID).join(',')
+                    }),
+                    timestamp: (new Date().toJSON())
+                }
 
+                //emit message to conversationInvitation
+                const addresseeSockets:string[] = ClientService.getSocketIdsByEmail(userEmail)
+                for (let i = 0; i < addresseeSockets.length; i++) {
+                    io.to(addresseeSockets[i]).emit('conversationInvitation', msg)
+                }
+            }
+            catch (e) {
+                console.error((e))
+            }
+        })
     }
 
     static createPublicConversation(socket:Socket, userEmail:string) {
@@ -66,7 +94,8 @@ export class ConversationService {
                 socket.join(uuid)
                 const addresseeSockets:string[] = ClientService.getSocketIdsByEmail(addresseeEmail)
                 for (let i = 0; i < addresseeSockets.length; i++) {
-                    io.to(addresseeSockets[i]).emit('conversationInvitation', msg)
+                    // io.to(addresseeSockets[i]).emit('conversationInvitation', msg)
+                    io.sockets.sockets.get(addresseeSockets[i])?.join(uuid)
                 }
             }
             catch (e) {
@@ -81,7 +110,7 @@ export class ConversationService {
             try {
                 let msgContent = []
                 const user = await UserService.getUser(userEmail)
-                const conversations:Conversation[] = await ConversationDAO.getConversationsByUserId(user.id)
+                const conversations:Conversation[] = await ConversationDAO.getJoinedConversationsByUserId(user.id)
 
                 
                 //create a new label that is a list of all the usernames of the participants

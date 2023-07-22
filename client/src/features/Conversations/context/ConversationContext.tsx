@@ -52,7 +52,7 @@ export const ConversationContextProvider = ({children}:any) => {
             uuid:msgData.uuid,
             label:msgData.label,
             hasUnreadMessages:false,
-            memberUUIDs:msgData.memberUUIDs.split(',')
+            memberUUIDs:msgData.memberUUIDs.split(','),
         }
         setCurrentConversation(conv)
     }

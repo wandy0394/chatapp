@@ -139,13 +139,14 @@ class ConversationDAO {
         return promise        
     }
 
-    static async getConversationByUUID(conversationUUID:string) {
+    static async getJoinedConversationsByUserId(userId:number) {
         const promise = new Promise<Conversation[]>((resolve, reject) => {
             try {
                 const sqlQuery = `SELECT c.id, c.uuid, c.label 
-                                    FROM Conversations c 
-                                    WHERE c.uuid=?`
-                db.query(sqlQuery, [conversationUUID], (err, result, fields) => {
+                                    FROM Conversations c join UserConversations u 
+                                    ON c.id=u.ConversationId 
+                                    WHERE u.UserId=? AND u.Status=?`
+                db.query(sqlQuery, [userId, STATUS.USER_JOINED], (err, result, fields) => {
                     if (err) {
                         console.error(err)
                         reject (new Error('Error querying database'))
@@ -169,8 +170,45 @@ class ConversationDAO {
                 reject(e)
             }
         })
+        return promise        
+    }
+
+    static async getConversationByUUID(conversationUUID:string) {
+        const promise = new Promise<Conversation[]>((resolve, reject) => {
+            try {
+                const sqlQuery = `SELECT c.id, c.uuid, c.label 
+                                    FROM Conversations c 
+                                    WHERE c.uuid=?`
+                db.query(sqlQuery, [conversationUUID], (err, result, fields) => {
+                    if (err) {
+                        console.error(err)
+                        reject (new Error('Error querying database'))
+                    }
+                    else {
+                        const row = result as RowDataPacket[]
+                        console.log(row)
+                        //TODO: fix this. Should not return array but a single unique value assuming UUIDs are unique
+                        const conversations:Conversation[] = row.map(r=>{
+                            return {
+                                id:r.id,
+                                uuid:r.uuid,
+                                label:r.label
+                            }
+                        })
+                        resolve(conversations)
+                    }
+                })
+            }
+            catch (e) {
+                console.error(e)
+                reject(e)
+            }
+        })
         return promise   
     }
+
+
+    
 
     static async updateUserConversationStatus(status:string, conversationId:number, userId:number) {
         const promise = new Promise<void>((resolve, reject) => {

@@ -23,6 +23,7 @@ const conversationListener = (socket:Socket) => {
     ConversationService.createPublicConversation(socket, user.email)
     ConversationService.getConversationByUserEmail(socket, user.email)
     ConversationService.joinRoom(socket, user.email)
+    ConversationService.handleInvitation(socket, user.email)
 }
 
 export default conversationListener

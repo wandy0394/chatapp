@@ -23,6 +23,7 @@ type ClientToServerEvents = {
     createPublicConversation: (socketId:string) => void
     getPublicConversations: () => void
     joinRoom: (roomId:string) => void
+    conversationInvitation: (msg:string) => void
 }
 
 

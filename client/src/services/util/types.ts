@@ -14,5 +14,6 @@ export type ClientToServerEvents = {
     message: (msg:Message) => void
     createPublicConversation: (id:string) => void
     getPublicConversations: () => void
+    conversationInvitation: (room:string) => void
 }
 
