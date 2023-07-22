@@ -52,8 +52,6 @@ export class ConversationService {
                 await ConversationDAO.addUserToConversation(user.id, conversation.id, STATUS.USER_JOINED)
                 await ConversationDAO.addUserToConversation(addressee.id, conversation.id, STATUS.USER_INVITED)
 
-
-
                 const msg:SystemMessage = {
                     content:JSON.stringify({
                         uuid:uuid, 
@@ -65,6 +63,7 @@ export class ConversationService {
 
                 //TODO: emit on all sockets associated with userEmail
                 socket.emit("createPublicConversation", msg)
+                socket.join(uuid)
                 const addresseeSockets:string[] = ClientService.getSocketIdsByEmail(addresseeEmail)
                 for (let i = 0; i < addresseeSockets.length; i++) {
                     io.to(addresseeSockets[i]).emit('conversationInvitation', msg)
