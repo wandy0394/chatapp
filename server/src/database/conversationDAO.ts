@@ -63,6 +63,36 @@ class ConversationDAO {
         return promise        
     }
 
+    static async getUsersByConversationId(conversationId:number) {
+        const promise = new Promise<string[]>((resolve, reject) => {
+            try {
+                const sqlQuery = `SELECT u.username
+                                    FROM Users u join UserConversations uc 
+                                    ON uc.UserId=u.id 
+                                    WHERE uc.ConversationId=?`
+                db.query(sqlQuery, [conversationId], (err, result, fields) => {
+                    if (err) {
+                        console.error(err)
+                        reject (new Error('Error querying database'))
+                    }
+                    else {
+                        const row = result as RowDataPacket[]
+                        console.log(row)
+                        const usernames:string[] = row.map(r=>{
+                            return r.username
+                        })
+                        resolve(usernames)
+                    }
+                })
+            }
+            catch (e) {
+                console.error(e)
+                reject(e)
+            }
+        })
+        return promise            
+    }
+
     static async getConversationsByUserId(userId:number) {
         const promise = new Promise<Conversation[]>((resolve, reject) => {
             try {

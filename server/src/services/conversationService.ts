@@ -48,7 +48,7 @@ export class ConversationService {
                 const conversation:Conversation = await ConversationDAO.createConversation(userEmail, label, uuid)
                 const user = await UserService.getUser(userEmail)
                 await ConversationDAO.addUserToConversation(user.id, conversation.id)
-                
+
                 const addressee = await UserService.getUser(addresseeEmail)
                 await ConversationDAO.addUserToConversation(addressee.id, conversation.id)
                 const msg:SystemMessage = {
@@ -91,6 +91,10 @@ export class ConversationService {
             try {
                 const user = await UserService.getUser(userEmail)
                 const conversations:Conversation[] = await ConversationDAO.getConversationsByUserId(user.id)
+                for (let i = 0; i < conversations.length; i++) {
+                    const usernames:string[] = await ConversationDAO.getUsersByConversationId(conversations[i].id)
+                    conversations[i].label = usernames.join(',')
+                }
                 const msg:SystemMessage = {
                     content:JSON.stringify(conversations),
                     timestamp: (new Date().toJSON())
