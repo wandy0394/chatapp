@@ -6,7 +6,7 @@ import { useAuthContext } from "../../Authentication/hooks/useAuthContext"
 
 type ContextType = {
     currentConversation:Conversation | null, 
-    createPublicConversation:()=>void, 
+    createPublicConversation:(label:string, addresseeEmail:string)=>void, 
     conversationList:Conversation[],
     setConversationList:React.Dispatch<React.SetStateAction<Conversation[]>>
     getPublicConversations:()=>void,
@@ -35,9 +35,9 @@ export const ConversationContextProvider = ({children}:any) => {
         ConversationService.requestJoinRoom(roomId)
     }
 
-    function createPublicConversation() {
+    function createPublicConversation(label:string, addresseeEmail:string) {
         if (user === null) return
-        ConversationService.createPublicConversation()
+        ConversationService.createPublicConversation(label, addresseeEmail)
     }
 
     function getPublicConversations() {

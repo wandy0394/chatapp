@@ -15,10 +15,10 @@ export class ConversationService {
         socket.off('joinRoom', callback)
     }
 
-    static createPublicConversation() {
+    static createPublicConversation(label:string, addresseeEmail:string) {
         const message = JSON.stringify({
-            label:'TestTest',
-            owner:'12345'
+            label:label,
+            addresseeEmail:addresseeEmail
         })
         if (socket.connected) {
             socket.emit('createPublicConversation', message)

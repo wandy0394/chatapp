@@ -1,6 +1,6 @@
 export type Session = {
     sessionId:string,
     email:string,
-    userUUID:number,
+    userUUID:string,
     id:number
 }

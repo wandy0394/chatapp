@@ -7,6 +7,7 @@ import conversationListener from './v1/listeners/conversationListener'
 import chatListener from './v1/listeners/chatListeners'
 import {  wrap } from './middleware/sessionMiddleware'
 import  { requireAuth2 } from './middleware/requireAuth'
+import clientListener from './v1/listeners/clientListener'
 
 dotenv.config()
 type ServerToClientEvents = {
@@ -38,6 +39,7 @@ const io:SocketServer<ClientToServerEvents, ServerToClientEvents> = new SocketSe
 
 
 io.use(wrap(requireAuth2))
+io.on("connection", clientListener)
 io.on("connection", conversationListener)
 io.on("connection", chatListener)
 

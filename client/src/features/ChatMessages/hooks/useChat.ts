@@ -29,7 +29,7 @@ export default function useChat() {
                     if (conv.id === msg.conversationRoomId) {
                         return {
                             id:conv.id,
-                            name:conv.name,
+                            label:conv.label,
                             hasUnreadMessages:true
                         }
                     }

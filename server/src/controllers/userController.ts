@@ -3,6 +3,7 @@ import {v4 as uuidv4} from 'uuid'
 import UserService from '../services/userService'
 import parseCookieHeader from '../util/parseCookieHeader'
 import ContacListService from '../services/contactListService'
+import ClientService from '../services/clientService'
 
 class UserController {
 
@@ -72,6 +73,7 @@ class UserController {
         try {
             const user = await UserService.login(email, password)
             await UserService.addSession(req.sessionID, user.email, user.userUUID, user.id)
+            
             let userData = {
                 username:user.username, 
                 email:user.email, 
@@ -119,8 +121,11 @@ class UserController {
     }
 
     static async logout(req:Request, res:Response, next:NextFunction) {
-        // const cookies = parseCookieHeader(req.headers?.cookie)
-        // if (cookies.sid) await UserService.deleteSessionBySessionId(cookies.sid)
+        const cookies = parseCookieHeader(req.headers?.cookie)
+        if (cookies.sid) {
+            await UserService.deleteSessionBySessionId(cookies.sid)
+            ClientService.unregisterClient(cookies.sid)
+        }
         res.clearCookie('user')
         res.clearCookie('sid')
         res.status(200).send({status:'ok', data:'Logout successsful'})

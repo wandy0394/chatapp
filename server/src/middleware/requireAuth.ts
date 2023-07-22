@@ -26,13 +26,17 @@ export default async function requireAuth(req:Request, res:Response, next:NextFu
 export async function requireAuth2(req:Request, res:Response, next:NextFunction) {
 
     const sid = parseCookieHeader(req.headers?.cookie).sid
-    if (!sid) next(new Error('Unauthorised'))
+    if (!sid) {
+        next(new Error('Unauthorised'))
+        return
+    }
     try {      
         const result = await UserService.getSessionBySessionId(sid)
         if (Object.keys(result).length > 0) {
             req.user = {
                 email:result.email,
-                sessionID:sid
+                sessionID:sid,
+                userUUID:result.userUUID
             }
         }
         next()

@@ -25,7 +25,7 @@ export default function ConversationList() {
                 >
                     Conversations
                 </span>
-                <div className='btn btn-primary btn-xs h-10 aspect-square' onClick={createPublicConversation}><p>New</p></div>
+                <div className='btn btn-primary btn-xs h-10 aspect-square' onClick={()=>createPublicConversation('New'+Math.floor(Math.random()*100))}><p>New</p></div>
                 <div className='btn btn-secondary btn-xs h-10 aspect-square' onClick={getPublicConversations}><p>Refresh</p></div>
             </div>
             <div className="w-full flex flex-col gap-4 px-4" style={{visibility:collapsed?'hidden':'visible'}}> 

@@ -1,6 +1,7 @@
 import ContactEntryMenu from "./ContactEntryMenu"
 import ContactAgent from "../../services/contact-service"
 import { useContactListContext } from "./hooks/useContactListContext"
+import { useConversationContext } from "../Conversations/hooks/useConversationContext"
 
 type Props = {
     avatar?:string
@@ -14,8 +15,9 @@ type Props = {
 export default function ContactEntry(props:Props) {
     const {avatar, name, status, email} = props
     const {setLoading} = useContactListContext()
+    const {createPublicConversation} = useConversationContext()
     function handleChat() {
-
+        createPublicConversation(name, email)
     }
     function handleRemove() {
         ContactAgent.removeContact(email)

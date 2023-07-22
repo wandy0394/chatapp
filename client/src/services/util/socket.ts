@@ -5,4 +5,8 @@ const webSocket:Socket<ServerToClientEvents, ClientToServerEvents> = io("http://
     withCredentials:true
 })
 
+webSocket.on('connect_error', ()=>{
+    console.log('Could not connect need to manually reconnect')
+})
+
 export  {webSocket}

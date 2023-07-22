@@ -2,6 +2,7 @@ import { ACTION_TYPES } from "../AuthContext"
 import {useState} from 'react'
 import Authenticator from "../../../services/authentication-service"
 import { useAuthContext } from "./useAuthContext"
+import { webSocket } from "../../../services/util/socket"
 
 export function useLogin() {
     const [error, setError] = useState<string | null>(null)
@@ -15,6 +16,7 @@ export function useLogin() {
         try {
             const response = await Authenticator.login(email, password)
             if (dispatch) dispatch({type:ACTION_TYPES.LOGIN, payload:{...response}})
+            if (webSocket.disconnected) webSocket.connect()
             setIsLoading(false)
         }
         catch (error) {
