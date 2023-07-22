@@ -26,7 +26,7 @@ export default function ChatInput(props:Props) {
                 author:author,
                 content:messageContent,
                 timestamp:(new Date().toJSON()),
-                conversationRoomId:currentConversation?.id
+                conversationRoomId:currentConversation?.uuid
             }
             socket.emit("message", message)
             appendMessage(message)

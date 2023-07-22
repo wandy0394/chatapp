@@ -1,5 +1,6 @@
 import {Connection, ResultSetHeader, RowDataPacket} from 'mysql2'
 import { Conversation } from '../types/conversation'
+import { User } from '../types/user'
 
 
 export const STATUS = {
@@ -70,9 +71,9 @@ class ConversationDAO {
     }
 
     static async getUsersByConversationId(conversationId:number) {
-        const promise = new Promise<string[]>((resolve, reject) => {
+        const promise = new Promise<User[]>((resolve, reject) => {
             try {
-                const sqlQuery = `SELECT u.username
+                const sqlQuery = `SELECT u.username, u.userUUID, u.email, u.id
                                     FROM Users u join UserConversations uc 
                                     ON uc.UserId=u.id 
                                     WHERE uc.ConversationId=?`
@@ -83,11 +84,16 @@ class ConversationDAO {
                     }
                     else {
                         const row = result as RowDataPacket[]
-                        console.log(row)
-                        const usernames:string[] = row.map(r=>{
-                            return r.username
+                        // console.log(row)
+                        const users:User[] = row.map(r=>{
+                            return {
+                                id:r.id,
+                                username:r.username,
+                                userUUID:r.userUUID,
+                                email:r.email
+                            }
                         })
-                        resolve(usernames)
+                        resolve(users)
                     }
                 })
             }

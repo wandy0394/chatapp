@@ -33,7 +33,7 @@ export default function ConversationList() {
                     conversationList.map((conversation) => {
                         return (
                             <ConversationListItem 
-                                key={conversation.id} 
+                                key={conversation.uuid} 
                                 conversation={conversation}
                                 joinRoom={joinRoom}
                             />

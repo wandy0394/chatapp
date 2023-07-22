@@ -17,17 +17,18 @@ export default function useChat() {
 
 
     const messageLisener = (msg:Message) => {
-        if (msg.conversationRoomId === currentConversation?.id) {
+        if (msg.conversationRoomId === currentConversation?.uuid) {
             setMessages((state)=>[...state, parseMessage(msg)])
         }
         else {
             console.log('new message but not displayed')
             const newConversationList:Conversation[] = conversationList.map(conv => {
-                if (conv.id === msg.conversationRoomId) {
+                if (conv.uuid === msg.conversationRoomId) {
                     return {
-                        id:conv.id,
+                        uuid:conv.uuid,
                         label:conv.label,
-                        hasUnreadMessages:true
+                        hasUnreadMessages:true,
+                        memberUUIDs:conv.memberUUIDs
                     }
                 }
                 return conv

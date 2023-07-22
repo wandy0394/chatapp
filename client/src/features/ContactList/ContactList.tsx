@@ -9,6 +9,7 @@ export default function ContactList() {
     const [addContactVisible, setAddContactVisible] = useState<boolean>(false)
     const {contacts, message, loading, setLoading} = useContactListContext()
     function handleClick() {
+        console.log(contacts)
         setAddContactVisible(state=>!state)
     }
     return (
@@ -33,7 +34,14 @@ export default function ContactList() {
                 {
                     contacts.map((contact, index) => {
                         return (
-                            <ContactEntry key={index} name={contact.username} avatar={contact.avatar} status={contact.status} email={contact.email}/>
+                            <ContactEntry 
+                                key={index} 
+                                name={contact.username} 
+                                avatar={contact.avatar} 
+                                status={contact.status} 
+                                email={contact.email}
+                                userUUID={contact.userUUID}
+                            />
                         )
                     })
                 }

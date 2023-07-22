@@ -7,16 +7,28 @@ type Props = {
     avatar?:string
     name:string
     status:string
-    email:string
+    email:string,
+    userUUID:string
 }
 
 
 
 export default function ContactEntry(props:Props) {
-    const {avatar, name, status, email} = props
+    const {avatar, name, status, email, userUUID} = props
     const {setLoading} = useContactListContext()
-    const {createPublicConversation} = useConversationContext()
+    const {createPublicConversation, conversationList} = useConversationContext()
     function handleChat() {
+        for (let i = 0; i < conversationList.length; i++) {
+            //only check cases where conversation only has 2 participants. This excludes group chats
+            console.log(conversationList[i].memberUUIDs)
+            if (conversationList[i].memberUUIDs.length === 2) {
+                if (conversationList[i].memberUUIDs.includes(userUUID)) {
+                    console.log('Duplicate')
+                    return
+                }
+            }
+        }
+        console.log('creating')
         createPublicConversation(name, email)
     }
     function handleRemove() {

@@ -49,19 +49,22 @@ export const ConversationContextProvider = ({children}:any) => {
         console.log(msg)
         const msgData = JSON.parse(msg.content) 
         const conv:Conversation = {
-            id:msgData.id,
+            uuid:msgData.uuid,
             label:msgData.label,
-            hasUnreadMessages:false
+            hasUnreadMessages:false,
+            memberUUIDs:msgData.memberUUIDs.split(',')
         }
         setCurrentConversation(conv)
     }
 
     const createPublicConversationListener = (msg:Message) => {
         console.log(msg)
+        const msgContent =JSON.parse(msg.content)
         const newConversation:Conversation = {
-            id:JSON.parse(msg.content).id,
-            label:JSON.parse(msg.content).label,
-            hasUnreadMessages:false
+            uuid:msgContent.uuid,
+            label:msgContent.label,
+            hasUnreadMessages:false,
+            memberUUIDs:msgContent.memberUUIDs.split(',')
         }
         setConversationList(prev=>[...prev, newConversation])
     }
@@ -71,23 +74,26 @@ export const ConversationContextProvider = ({children}:any) => {
         let msgContent = JSON.parse(msg.content)
         let newConversations:Conversation[] = []
         newConversations =  Object.keys(msgContent).map(key=>{
-            console.log(msgContent[key].uuid)
+            console.log(msgContent[key].memberUUIDs.split(','))
+
             return {
-                id:msgContent[key].uuid,
+                uuid:msgContent[key].uuid,
                 label:msgContent[key].label,
-                hasUnreadMessages:false
+                hasUnreadMessages:false,
+                memberUUIDs:msgContent[key].memberUUIDs.split(',')
             }
         })
-        setConversationList(p=>[...p, ...newConversations])
+        setConversationList(newConversations)
     }
 
     const conversationInvitationListener = (msg:Message) => {
         console.log(JSON.parse(msg.content))
         let msgContent = JSON.parse(msg.content)
         let newConversation:Conversation = {
-            id:msgContent.uuid,
+            uuid:msgContent.uuid,
             label:msgContent.label,
-            hasUnreadMessages:true
+            hasUnreadMessages:true,
+            memberUUIDs:msgContent.memberUUIDs.split(',')
         }
         console.log('Got invitation')
         setConversationList(prev=>[...prev, newConversation])        

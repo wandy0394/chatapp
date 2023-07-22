@@ -16,14 +16,15 @@ export default function ConversationListItem(props:Props) {
     }
 
     function handleClick() {
-        joinRoom(conversation.id)
+        joinRoom(conversation.uuid)
         console.log(conversationList)
         const newConversationList:Conversation[] = conversationList.map(conv => {
-            if (conv.id === conversation.id) {
+            if (conv.uuid === conversation.uuid) {
                 return {
-                    id:conv.id,
+                    uuid:conv.uuid,
                     label:conv.label,
-                    hasUnreadMessages:false
+                    hasUnreadMessages:false,
+                    memberUUIDs:conv.memberUUIDs
                 }
             }
             return conv

@@ -1,5 +1,6 @@
 export type Conversation = {
-    id:string,
+    uuid:string,
     label:string,
-    hasUnreadMessages:boolean
+    hasUnreadMessages:boolean,
+    memberUUIDs:string[]
 }

@@ -45,7 +45,7 @@ class ClientService {
             }
             console.log(clients)
             return true
-        }            console.log('Here')
+        }            
 
         return false
     }

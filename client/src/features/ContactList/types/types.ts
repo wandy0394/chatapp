@@ -2,6 +2,6 @@ export type Contact = {
     username:string,
     email:string,
     avatar?:string,
-    uuid:string,
+    userUUID:string,
     status:string,
 }
