@@ -17,6 +17,7 @@ export default function ConversationListItem(props:Props) {
 
     function handleClick() {
         joinRoom(conversation.id)
+        console.log(conversationList)
         const newConversationList:Conversation[] = conversationList.map(conv => {
             if (conv.id === conversation.id) {
                 return {

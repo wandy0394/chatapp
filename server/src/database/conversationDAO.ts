@@ -105,8 +105,8 @@ class ConversationDAO {
                 const sqlQuery = `SELECT c.id, c.uuid, c.label 
                                     FROM Conversations c join UserConversations u 
                                     ON c.id=u.ConversationId 
-                                    WHERE u.UserId=? and Status=?`
-                db.query(sqlQuery, [userId, STATUS.USER_JOINED], (err, result, fields) => {
+                                    WHERE u.UserId=?`
+                db.query(sqlQuery, [userId], (err, result, fields) => {
                     if (err) {
                         console.error(err)
                         reject (new Error('Error querying database'))

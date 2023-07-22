@@ -78,19 +78,19 @@ export const ConversationContextProvider = ({children}:any) => {
                 hasUnreadMessages:false
             }
         })
-        setConversationList(newConversations)
+        setConversationList(p=>[...p, ...newConversations])
     }
 
     const conversationInvitationListener = (msg:Message) => {
         console.log(JSON.parse(msg.content))
         let msgContent = JSON.parse(msg.content)
         let newConversation:Conversation = {
-            id:msgContent.id,
+            id:msgContent.uuid,
             label:msgContent.label,
             hasUnreadMessages:true
         }
-        console.log(newConversation)
-        setConversationList(prev=>[...conversationList, newConversation])        
+        console.log('Got invitation')
+        setConversationList(prev=>[...prev, newConversation])        
     }
 
     useEffect(()=>{

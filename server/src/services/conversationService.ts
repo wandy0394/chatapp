@@ -44,7 +44,7 @@ export class ConversationService {
                 await ConversationDAO.addUserToConversation(addressee.id, conversation.id, STATUS.USER_INVITED)
                 const msg:SystemMessage = {
                     content:JSON.stringify({
-                        id:uuid, 
+                        uuid:uuid, 
                         label:[user.username, addressee.username].join(',')
                     }),
                     timestamp: (new Date().toJSON())
@@ -64,7 +64,7 @@ export class ConversationService {
         })
     }
 
-    static getConversationByUserId(socket:Socket, userEmail:string) {
+    static getConversationByUserEmail(socket:Socket, userEmail:string) {
         socket.on('getPublicConversations', async ()=>{
             try {
                 const user = await UserService.getUser(userEmail)

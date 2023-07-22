@@ -1,8 +1,12 @@
 import {Socket} from 'socket.io'
 import ClientService from '../../services/clientService'
+import { ConversationService } from '../../services/conversationService'
+import UserService from '../../services/userService'
+import ConversationDAO from '../../database/conversationDAO'
+import { Conversation } from '../../types/conversation'
 
 
-const clientListener = (socket:Socket) => {
+const clientListener = async (socket:Socket) => {
     const user = socket.request.user
     if (user === null || user === undefined) return
     console.log('Registration listener')
@@ -11,6 +15,18 @@ const clientListener = (socket:Socket) => {
 
     if (!ClientService.registerClient(user.userUUID, user.email, socket.id, user.sessionID)) {
         ClientService.updateClientSocketId(user.sessionID, socket.id)
+        try {
+
+            let userObj = await UserService.getUser(user.email)
+            const conversations:Conversation[] = await ConversationDAO.getConversationsByUserId(userObj.id)
+            conversations.forEach(conv => {
+                socket.join(conv.uuid)
+            })
+            console.log('Re-joining conversations')
+        } 
+        catch(e) {
+            console.error(e)
+        }
     }
 
 }

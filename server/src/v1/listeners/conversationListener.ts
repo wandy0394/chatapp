@@ -21,7 +21,7 @@ const conversationListener = (socket:Socket) => {
     console.log('socketId is ' + socket.id)
 
     ConversationService.createPublicConversation(socket, user.email)
-    ConversationService.getConversationByUserId(socket, user.email)
+    ConversationService.getConversationByUserEmail(socket, user.email)
     ConversationService.joinRoom(socket, user.email)
 }
 
