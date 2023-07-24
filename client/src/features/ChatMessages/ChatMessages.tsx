@@ -21,7 +21,7 @@ export default function ChatMessages(props:Props) {
     const {currentConversation} = useConversationContext()
 
     useEffect(()=>{
-        setMessages([])
+        // setMessages([])
     }, [currentConversation])
     return (
         <div className='w-full h-full border border-black p-4 flex flex-col gap-4'>

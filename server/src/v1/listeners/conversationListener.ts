@@ -24,6 +24,7 @@ const conversationListener = (socket:Socket) => {
     ConversationService.getConversationByUserEmail(socket, user.email)
     ConversationService.joinRoom(socket, user.email)
     ConversationService.handleInvitation(socket, user.email)
+    ConversationService.handleConversationHistoryRequest(socket, user.email)
 }
 
 export default conversationListener

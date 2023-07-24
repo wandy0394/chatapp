@@ -10,7 +10,8 @@ type ContextType = {
     conversationList:Conversation[],
     setConversationList:React.Dispatch<React.SetStateAction<Conversation[]>>
     getPublicConversations:()=>void,
-    joinRoom: (roomId:string)=>void
+    joinRoom: (roomId:string)=>void,
+    getConversationHistory: (conversationUUID:string) => void
 
 }
 
@@ -21,6 +22,7 @@ export const ConversationContext = createContext<ContextType>({
     setConversationList:Function.prototype(),
     getPublicConversations: Function.prototype(), 
     joinRoom:Function.prototype(), 
+    getConversationHistory: Function.prototype()
 })
 
 
@@ -29,6 +31,11 @@ export const ConversationContextProvider = ({children}:any) => {
     const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
     const {user} = useAuthContext()
+
+    //TODO: relocate to useChat??
+    function getConversationHistory(conversationUUID:string) {
+        ConversationService.getConversationHistory(conversationUUID)
+    }
 
     function joinRoom(roomId:string) {
         if (user === null) return
@@ -99,18 +106,22 @@ export const ConversationContextProvider = ({children}:any) => {
         setConversationList(prev=>[...prev, newConversation])        
     }
 
+
+
     useEffect(()=>{
         if (user === null) return
         ConversationService.listenOnJoinRoom(joinRoomListener)
         ConversationService.listenOnCreatePublicConversation(createPublicConversationListener)
         ConversationService.listenOnGetPublicConversations(getPublicConversationsListener)
-        ConversationService.requestPublicConversations()
         ConversationService.listenOnConversationInvitation(conversationInvitationListener)
+
+        ConversationService.requestPublicConversations()
         
         return ()=>{
             ConversationService.removeJoinRoomListener(joinRoomListener)
             ConversationService.removeCreatePublicConversationListener(createPublicConversationListener)
             ConversationService.removeGetPublicConversationsListener(getPublicConversationsListener)
+            
         }
     }, [user])
 
@@ -122,7 +133,8 @@ export const ConversationContextProvider = ({children}:any) => {
                 setConversationList,
                 joinRoom,
                 getPublicConversations,
-                createPublicConversation
+                createPublicConversation,
+                getConversationHistory
             }}
         >
             {children}

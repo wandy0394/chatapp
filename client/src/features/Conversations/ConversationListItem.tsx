@@ -9,13 +9,14 @@ type Props = {
 
 export default function ConversationListItem(props:Props) {
     const {conversation, joinRoom} = props
-    const {currentConversation, conversationList, setConversationList} = useConversationContext()
+    const {currentConversation, conversationList, setConversationList, getConversationHistory} = useConversationContext()
     const {user} = useAuthContext()
     function handleDeleteClick() {
 
     }
 
     function handleClick() {
+        getConversationHistory(conversation.uuid)
         joinRoom(conversation.uuid)
         console.log(conversationList)
         const newConversationList:Conversation[] = conversationList.map(conv => {

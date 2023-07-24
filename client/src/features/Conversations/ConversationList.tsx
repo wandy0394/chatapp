@@ -4,12 +4,6 @@ import ConversationListItem from "./ConversationListItem"
 import { useConversationContext } from "./hooks/useConversationContext"
 
 
-const DUMMY_CHATS = [
-    {uuid:'1', name:'Food', members:[]},
-    {uuid:'2', name:'Movies', members:[]},
-    {uuid:'3', name:'Musicals', members:[]},
-]
-
 export default function ConversationList() {
     const {conversationList, createPublicConversation, getPublicConversations, joinRoom} = useConversationContext()
 

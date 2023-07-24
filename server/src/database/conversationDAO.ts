@@ -1,6 +1,7 @@
 import {Connection, ResultSetHeader, RowDataPacket} from 'mysql2'
 import { Conversation } from '../types/conversation'
 import { User } from '../types/user'
+import { ChatMessage } from '../types/message'
 
 
 export const STATUS = {
@@ -230,6 +231,72 @@ class ConversationDAO {
             }
         })
         return promise          
+    }
+
+    static async insertConversationLine(content:string, conversationId:number, username:string, userId:number, timestamp:Date) {
+        const promise = new Promise<void>((resolve, reject) => {
+            try {
+                const sqlQuery = `INSERT INTO ConversationLine (content, conversationId, username, userId, timestamp) 
+                                    VALUES (?, ?, ?, ?, ?)`
+                db.query(sqlQuery, [content, conversationId, username, userId, timestamp], (err, result, fields) => {
+                    if (err) {
+                        console.error(err)
+                        reject (new Error('Error querying database'))
+                    }
+                    else {
+                        resolve()
+                    }
+                })
+            }
+            catch (e) {
+                console.error(e)
+                reject(e)
+            }
+        })
+        return promise             
+    }
+
+    static async getConversationLine(conversationId:number, conversationUUID:string):Promise<ChatMessage[]> {
+        const promise = new Promise<ChatMessage[]>((resolve, reject) => {
+            try {
+                const sqlQuery = `SELECT
+                                    u.id, u.username, u.userUUID, u.email, c.content, c.timestamp 
+                                    FROM ConversationLine as c join Users as u
+                                    ON c.userId = u.id
+                                    WHERE conversationId = ? 
+                                    ORDER BY timestamp DESC
+                                    LIMIT 30`
+                db.query(sqlQuery, [conversationId], (err, result, fields) => {
+                    if (err) {
+                        console.error(err)
+                        reject (new Error('Error querying database'))
+                    }
+                    else {
+                        const rows = result as RowDataPacket[]
+                        const messages:ChatMessage[] = rows.map(r=> {
+                            return {
+                                author: {
+                                    username:r.username,
+                                    userUUID:r.userUUID,
+                                    email:r.email,
+                                    id:r.id
+                                },
+                                content:r.content,
+                                timestamp:r.timestamp,
+                                conversationRoomId:conversationUUID
+                            }
+
+                        })
+                        resolve(messages)
+                    }
+                })
+            }
+            catch (e) {
+                console.error(e)
+                reject(e)
+            }
+        })
+        return promise             
     }
 }
 

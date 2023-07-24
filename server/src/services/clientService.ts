@@ -14,7 +14,7 @@ class ClientService {
 
     static isClientRegistered(userUUID:string, email:string): boolean {
         return Object.values(clients).find((client) => {
-        return client.userUUID === userUUID && client.email===email
+            return client.userUUID === userUUID && client.email===email
         }) !== undefined
     } 
 
@@ -43,7 +43,6 @@ class ClientService {
                 userUUID: userUUID,
                 email:email
             }
-            console.log(clients)
             return true
         }            
 
@@ -54,8 +53,6 @@ class ClientService {
     static unregisterClient(sessionId:string) {
         if (sessionId in clients) {
             delete clients[sessionId]
-            console.log(clients)
-
         }
     }
 
@@ -63,7 +60,6 @@ class ClientService {
     static updateClientSocketId(sessionId:string, socketId:string) {
         if (sessionId in clients) {
             clients[sessionId].socketId = socketId
-            console.log(clients)
         }
     }
 
@@ -74,6 +70,8 @@ class ClientService {
         })
         return output
     }
+
+    
 
 }
 

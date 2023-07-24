@@ -11,3 +11,7 @@ export type CreateConversationRequest = {
     owner: string,
     addressee?:string,
 }
+
+export type ConversationLine = {
+    
+}

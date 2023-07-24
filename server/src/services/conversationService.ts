@@ -49,6 +49,28 @@ export class ConversationService {
         })
     }
 
+    static handleConversationHistoryRequest(socket:Socket, userEmail:String) {
+        //TODO handle errors
+        if (userEmail === null || userEmail === undefined) return
+        if (socket === null || socket === undefined) return
+        socket.on('conversationHistory', async (message:string) => {
+            //TODO sanitise message
+            try {
+                const conversation = await ConversationDAO.getConversationByUUID(message)
+                const history = await ConversationDAO.getConversationLine(conversation[0].id, message)
+                //TODO strip userId before emitting
+                const retVal:SystemMessage = {
+                    content:JSON.stringify(history),
+                    timestamp: (new Date().toJSON())
+                }
+                socket.emit('conversationHistory', retVal)
+            }
+            catch (e) {
+                console.error(e)
+            }
+        })
+    }
+
     static createPublicConversation(socket:Socket, userEmail:string) {
         //TODO handle errors
         if (userEmail === null || userEmail === undefined) return
@@ -137,6 +159,16 @@ export class ConversationService {
         })
     }
 
+    static async getConversationByUUID(conversationUUID:string):Promise<Conversation[]> {
+        try {
+            const conv = await ConversationDAO.getConversationByUUID(conversationUUID)
+            return conv
+        }
+        catch (e) {
+            console.error(e)
+            throw(e)
+        }
+    }
     static joinRoom(socket:Socket, userEmail:string) {
         socket.on('joinRoom', async (conversationUUID:string)=>{
             try {
@@ -163,4 +195,14 @@ export class ConversationService {
     
         })
     }
+
+    static async insertConversationLine(content:string, conversationId:number, username:string, userId:number, timestamp:Date) {
+        try {
+            await ConversationDAO.insertConversationLine(content, conversationId, username, userId, timestamp)
+        }
+        catch (e) {
+            console.error(e)
+        }
+    }
+
 }

@@ -15,6 +15,18 @@ export class ConversationService {
         socket.off('joinRoom', callback)
     }
 
+    static getConversationHistory(conversationUUID:string) {
+        socket.emit('conversationHistory', conversationUUID)
+    }
+
+    static listenOnConversationHistory(callback:(msg:Message)=>void) {
+        socket.on('conversationHistory', callback)
+    }
+
+    static removeConversationHistoryListener(callback:(msg:Message)=>void) {
+        socket.off('conversationHistory', callback)
+    }
+
     static createPublicConversation(label:string, addresseeEmail:string) {
         const message = JSON.stringify({
             label:label,
@@ -33,6 +45,7 @@ export class ConversationService {
         socket.off('createPublicConversation', callback)
     }
 
+    //TODO:rename this
     static requestPublicConversations() {
         socket.emit('getPublicConversations')
     }
