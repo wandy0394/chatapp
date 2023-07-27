@@ -5,6 +5,8 @@ import { ConversationService } from '../../services/conversationService'
 declare module "http" {
     interface IncomingMessage {
         user: {
+            id:number,
+            username:string,
             email:string,
             sessionID:string,
             userUUID:string

@@ -84,7 +84,8 @@ export class ConversationService {
             if (addresseeEmail === null || addresseeEmail === undefined) return
             
             try {
-                const user = await UserService.getUser(userEmail)
+                // const user = await UserService.getUser(userEmail)
+                const user = socket.request.user
                 const userConversations = await ConversationDAO.getConversationsByUserId(user.id)
                 const addressee = await UserService.getUser(addresseeEmail)
                 const addresseeConversations = await ConversationDAO.getConversationsByUserId(addressee.id)

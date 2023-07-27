@@ -11,19 +11,38 @@ dotenv.config()
 const port = process.env.PORT || 8000
 const chatPort = process.env.CHAT_PORT || 3000
 
-const connection = mysql.createConnection(process.env.DATABASE_URL as string)
-connection.connect((err)=>{
-    if (err) {
-        console.error('Could not connect to SQL database')
-        console.error(err)
-    }
+// const connection = mysql.createConnection(process.env.DATABASE_URL as string)
+
+// connection.connect((err)=>{
+//     if (err) {
+//         console.error('Could not connect to SQL database')
+//         console.error(err)
+//     }
+//     UserService.injectConn(connection)
+//     ContactListService.injectConn(connection)
+//     ConversationService.injectConn(connection)
+//     UserService.connectionCheck()
+// })
+
+const connection = mysql.createPool(process.env.DATABASE_URL as string)
+connection.on("connection", (connection)=>{
+    console.log('Injecting connection')
     UserService.injectConn(connection)
     ContactListService.injectConn(connection)
     ConversationService.injectConn(connection)
     UserService.connectionCheck()
 })
 
-
+connection.getConnection((err, connection)=>{
+    if (err) {
+        console.error(err)
+        //TODO: handle error here
+    }
+    else {
+        console.log('connected')
+        if (connection) connection.release()
+    }
+})
 
 httpServer.listen(chatPort, ()=>{
     console.log(`Listening for socket connections on port ${chatPort}`)

@@ -45,9 +45,12 @@ export default function ConversationListItem(props:Props) {
         <div 
             className='group w-full flex items-center justify-between gap-4 rounded p-4 hover:cursor-pointer hover:bg-base-200'
             onClick={handleClick}
+            
         >
            
-            <label className="text-xl flex gap-8 items-baseline justify-center">
+            <label 
+                className="text-xl flex gap-8 items-baseline justify-center"
+            >
                 <label>{filterLabel(conversation.label)}</label>
                 <label className={`text-sm bg-info text-black rounded-full px-2 ${conversation.hasUnreadMessages ? 'block' : 'hidden'}`}>NEW</label>
             </label>
