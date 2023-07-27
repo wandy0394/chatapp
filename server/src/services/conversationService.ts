@@ -8,6 +8,7 @@ import UserService from './userService'
 import ClientService from './clientService'
 import { io } from '../chat-server'
 import { User } from '../types/user'
+import { NextFunction } from 'express'
 
 export type ConversationResponse = {
     label:string,
@@ -76,6 +77,21 @@ export class ConversationService {
             }
         })
     }
+
+    static async getConversationHistory(conversationUUID:string) {
+        try {
+            const conversation = await ConversationDAO.getConversationByUUID(conversationUUID)
+            const history = await ConversationDAO.getConversationLine(conversation[0].id, conversationUUID)
+            //TODO strip userId before emitting
+            
+            return history
+        }
+        catch (e) {
+            console.error(e)
+            throw(e)
+        }
+    }
+
 
     static createPublicConversation(socket:Socket, userEmail:string) {
         //TODO handle errors
@@ -160,37 +176,37 @@ export class ConversationService {
         }        
     }
 
-    static getConversationByUserEmail(socket:Socket, userEmail:string) {
-        socket.on('getPublicConversations', async ()=>{
-            try {
-                let msgContent = []
-                const user = await UserService.getUser(userEmail)
-                const conversations:Conversation[] = await ConversationDAO.getJoinedConversationsByUserId(user.id)
+    // static getConversationByUserEmail(socket:Socket, userEmail:string) {
+    //     socket.on('getPublicConversations', async ()=>{
+    //         try {
+    //             let msgContent = []
+    //             const user = await UserService.getUser(userEmail)
+    //             const conversations:Conversation[] = await ConversationDAO.getJoinedConversationsByUserId(user.id)
 
                 
-                //create a new label that is a list of all the usernames of the participants
+    //             //create a new label that is a list of all the usernames of the participants
                 
-                for (let i = 0; i < conversations.length; i++) {
-                    const users:User[] = await ConversationDAO.getUsersByConversationId(conversations[i].id)
-                    msgContent.push({
-                        label:users.map(u=>u.username).join(','),
-                        uuid:conversations[i].uuid,
-                        memberUUIDs:users.map(u=>u.userUUID).join(',')
-                    })
-                }
+    //             for (let i = 0; i < conversations.length; i++) {
+    //                 const users:User[] = await ConversationDAO.getUsersByConversationId(conversations[i].id)
+    //                 msgContent.push({
+    //                     label:users.map(u=>u.username).join(','),
+    //                     uuid:conversations[i].uuid,
+    //                     memberUUIDs:users.map(u=>u.userUUID).join(',')
+    //                 })
+    //             }
                 
-                //TODO: remove conversation table id (primary key) from msg
-                const msg:SystemMessage = {
-                    content:JSON.stringify(msgContent),
-                    timestamp: (new Date().toJSON())
-                }
-                socket.emit('getPublicConversations', msg)
-            }
-            catch (e) {
-                console.error(e)
-            }
-        })
-    }
+    //             //TODO: remove conversation table id (primary key) from msg
+    //             const msg:SystemMessage = {
+    //                 content:JSON.stringify(msgContent),
+    //                 timestamp: (new Date().toJSON())
+    //             }
+    //             socket.emit('getPublicConversations', msg)
+    //         }
+    //         catch (e) {
+    //             console.error(e)
+    //         }
+    //     })
+    // }
 
     static async getConversationByUUID(conversationUUID:string):Promise<Conversation[]> {
         try {

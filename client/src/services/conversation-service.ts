@@ -32,9 +32,9 @@ export class ConversationService {
         socket.off('joinRoom', callback)
     }
 
-    static getConversationHistory(conversationUUID:string) {
-        socket.emit('conversationHistory', conversationUUID)
-    }
+    // static getConversationHistory(conversationUUID:string) {
+    //     socket.emit('conversationHistory', conversationUUID)
+    // }
 
     static listenOnConversationHistory(callback:(msg:Message)=>void) {
         socket.on('conversationHistory', callback)
@@ -62,10 +62,6 @@ export class ConversationService {
         socket.off('createPublicConversation', callback)
     }
 
-    //TODO:rename this
-    static requestPublicConversations() {
-        socket.emit('getPublicConversations')
-    }
 
     static async getConversations() {
         const config:RequestInit = {
@@ -75,6 +71,24 @@ export class ConversationService {
         }
         try {
             const response = await request<ResponseObject<ConversationResponse[]>>(`${url}`, config)
+            if (response.status === RESPONSE_TYPE.OK) {
+                return response.data
+            }
+        }
+        catch(error) {
+            if (error instanceof RequestError || error instanceof Error) throw (error)
+            throw new Error('Unknown Error')  
+        }  
+    }
+
+    static async getConversationHistory(conversationUUID:string) {
+        const config:RequestInit = {
+            method:'GET',
+            headers:headers,
+            credentials:credentials,
+        }
+        try {
+            const response = await request<ResponseObject<Message[]>>(`${url}/history/${conversationUUID}`, config)
             if (response.status === RESPONSE_TYPE.OK) {
                 return response.data
             }

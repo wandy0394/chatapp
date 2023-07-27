@@ -4,7 +4,6 @@ export type ServerToClientEvents = {
     joinRoom: (msg:Message) => void
     message: (msg:Message) => void
     createPublicConversation: (msg:Message) => void
-    getPublicConversations:(msg:Message) => void
     conversationInvitation: (msg:Message) => void
     conversationHistory: (msg:Message) => void
 }
@@ -14,7 +13,6 @@ export type ClientToServerEvents = {
     joinRoom: (room:string) => void 
     message: (msg:Message) => void
     createPublicConversation: (id:string) => void
-    getPublicConversations: () => void
     conversationInvitation: (room:string) => void
     conversationHistory:(conversationUUID:string) => void
 }

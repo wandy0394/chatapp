@@ -23,7 +23,7 @@ const conversationListener = (socket:Socket) => {
     console.log('socketId is ' + socket.id)
 
     ConversationService.createPublicConversation(socket, user.email)
-    ConversationService.getConversationByUserEmail(socket, user.email)
+    // ConversationService.getConversationByUserEmail(socket, user.email)
     ConversationService.joinRoom(socket, user.email)
     ConversationService.handleInvitation(socket, user.email)
     ConversationService.handleConversationHistoryRequest(socket, user.email)

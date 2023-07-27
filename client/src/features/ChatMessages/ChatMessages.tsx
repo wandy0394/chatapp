@@ -2,7 +2,7 @@ import { Message } from "./types"
 import { useEffect } from "react"
 import ChatBubble from "./ChatBubble"
 import { useAuthContext } from "../Authentication/hooks/useAuthContext"
-import useChat from "./hooks/useChat"
+
 import { useConversationContext } from "../Conversations/hooks/useConversationContext"
 
 function parseMessage(msg:Message):Message {
@@ -16,13 +16,11 @@ type Props = {
 }
 
 export default function ChatMessages(props:Props) {
-    const {messages, setMessages} = props
+    
     const {user} = useAuthContext()
-    const {currentConversation} = useConversationContext()
+    const {currentConversation, messages, setMessages} = useConversationContext()
 
-    useEffect(()=>{
-        // setMessages([])
-    }, [currentConversation])
+
     return (
         <div className='w-full h-full border border-black p-4 flex flex-col gap-4'>
             <span className='flex gap-4'>

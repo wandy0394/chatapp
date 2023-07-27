@@ -1,4 +1,6 @@
+import { useEffect } from "react"
 import { useAuthContext } from "../Authentication/hooks/useAuthContext"
+
 import { useConversationContext } from "./hooks/useConversationContext"
 import { Conversation } from "./types"
 
@@ -9,11 +11,13 @@ type Props = {
 
 export default function ConversationListItem(props:Props) {
     const {conversation, joinRoom} = props
-    const {currentConversation, conversationList, setConversationList, getConversationHistory} = useConversationContext()
+    const {getConversationHistory, messages, currentConversation, conversationList, setConversationList} = useConversationContext()
+    
     const {user} = useAuthContext()
     function handleDeleteClick() {
 
     }
+
 
     function handleClick() {
         getConversationHistory(conversation.uuid)

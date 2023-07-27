@@ -9,7 +9,7 @@ router.route("/")
     .get(ConversationController.getConversations)
     .post(ConversationController.createConversation)
 
-router.route("/history")
+router.route("/history/:conversationUUID")
     .get(ConversationController.getConversationHistory)
 
 export default router

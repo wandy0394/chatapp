@@ -3,11 +3,17 @@ import ChatMessages from "../features/ChatMessages/ChatMessages";
 import ContactList from "../features/ContactList/ContactList";
 import NotificationPane from "../features/Notification/NotificationPane";
 import ConversationList from "../features/Conversations/ConversationList";
-import useChat from "../features/ChatMessages/hooks/useChat";
+
 import { Message } from "../features/ChatMessages/types";
+import { useEffect } from "react";
+import { useConversationContext } from "../features/Conversations/hooks/useConversationContext";
 
 export default function Home() {
-    const {messages, setMessages} = useChat()
+    const {messages, setMessages} = useConversationContext()
+
+    useEffect(()=>{
+        console.log(messages)
+    }, [messages])
 
     function appendMessage(msg:Message) {
         setMessages(state=>[...state, msg])

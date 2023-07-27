@@ -1,11 +1,10 @@
 import { useState } from "react"
-import useConversations from "./hooks/useConversations"
 import ConversationListItem from "./ConversationListItem"
 import { useConversationContext } from "./hooks/useConversationContext"
 
 
 export default function ConversationList() {
-    const {conversationList, createPublicConversation, getPublicConversations, joinRoom} = useConversationContext()
+    const {conversationList, createPublicConversation, getConversations, joinRoom} = useConversationContext()
 
     const [collapsed, setCollapsed] = useState<boolean>(false)
 
@@ -20,7 +19,7 @@ export default function ConversationList() {
                     Conversations
                 </span>
                 <div className='btn btn-primary btn-xs h-10 aspect-square'><p>New</p></div>
-                <div className='btn btn-secondary btn-xs h-10 aspect-square' onClick={getPublicConversations}><p>Refresh</p></div>
+                <div className='btn btn-secondary btn-xs h-10 aspect-square' onClick={getConversations}><p>Refresh</p></div>
             </div>
             <div className="w-full flex flex-col gap-4 px-4" style={{visibility:collapsed?'hidden':'visible'}}> 
                 {
