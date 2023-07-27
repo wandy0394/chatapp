@@ -76,21 +76,26 @@ export const ConversationContextProvider = ({children}:any) => {
         setConversationList(prev=>[...prev, newConversation])
     }
 
-    const getPublicConversationsListener = (msg:Message) => {
-        console.log(JSON.parse(msg.content))
-        let msgContent = JSON.parse(msg.content)
-        let newConversations:Conversation[] = []
-        newConversations =  Object.keys(msgContent).map(key=>{
-            console.log(msgContent[key].memberUUIDs.split(','))
 
-            return {
-                uuid:msgContent[key].uuid,
-                label:msgContent[key].label,
-                hasUnreadMessages:false,
-                memberUUIDs:msgContent[key].memberUUIDs.split(',')
-            }
-        })
-        setConversationList(newConversations)
+    function getConversations() {
+        ConversationService.getConversations()
+            .then(response=>{
+                console.log(response)
+                if (response === null || response === undefined) return
+                let newConversations:Conversation[] = []
+                newConversations = response.map(key=>{
+                    return {
+                        uuid:key.uuid,
+                        label:key.label,
+                        hasUnreadMessages:false,
+                        memberUUIDs:key.memberUUIDs
+                    }
+                })
+                setConversationList(newConversations)
+            })
+            .catch(error=>{
+                console.log(error)
+            })
     }
 
     const conversationInvitationListener = (msg:Message) => {
@@ -112,16 +117,14 @@ export const ConversationContextProvider = ({children}:any) => {
         if (user === null) return
         ConversationService.listenOnJoinRoom(joinRoomListener)
         ConversationService.listenOnCreatePublicConversation(createPublicConversationListener)
-        ConversationService.listenOnGetPublicConversations(getPublicConversationsListener)
         ConversationService.listenOnConversationInvitation(conversationInvitationListener)
 
         ConversationService.requestPublicConversations()
+        getConversations()
         
         return ()=>{
             ConversationService.removeJoinRoomListener(joinRoomListener)
             ConversationService.removeCreatePublicConversationListener(createPublicConversationListener)
-            ConversationService.removeGetPublicConversationsListener(getPublicConversationsListener)
-            
         }
     }, [user])
 

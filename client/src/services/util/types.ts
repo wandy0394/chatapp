@@ -19,3 +19,8 @@ export type ClientToServerEvents = {
     conversationHistory:(conversationUUID:string) => void
 }
 
+export type ConversationResponse = {
+    label:string,
+    uuid:string,
+    memberUUIDs:string[]
+}

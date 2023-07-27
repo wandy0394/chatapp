@@ -9,6 +9,12 @@ import ClientService from './clientService'
 import { io } from '../chat-server'
 import { User } from '../types/user'
 
+export type ConversationResponse = {
+    label:string,
+    uuid:string,
+    memberUUIDs:string[]
+}
+
 export class ConversationService {
 
     static injectConn(conn:Connection) {
@@ -126,6 +132,32 @@ export class ConversationService {
                 //TODO:send error notification
             }
         })
+    }
+
+
+    static async getConversations(user:User):Promise<ConversationResponse[]> {
+        if (user === null || user === undefined) throw new Error('User is undefined or null')
+        try {
+            let result:ConversationResponse[] = []
+            const conversations:Conversation[] = await ConversationDAO.getJoinedConversationsByUserId(user.id)
+
+            
+            //create a new label that is a list of all the usernames of the participants
+            
+            for (let i = 0; i < conversations.length; i++) {
+                const users:User[] = await ConversationDAO.getUsersByConversationId(conversations[i].id)
+                result.push({
+                    label:users.map(u=>u.username).join(','),
+                    uuid:conversations[i].uuid,
+                    memberUUIDs:users.map(u=>u.userUUID)
+                })
+            }
+            return result
+        }
+        catch (e) {
+            console.error(e)
+            throw(e)
+        }        
     }
 
     static getConversationByUserEmail(socket:Socket, userEmail:string) {

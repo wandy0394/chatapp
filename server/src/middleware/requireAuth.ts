@@ -10,10 +10,13 @@ export default async function requireAuth(req:Request, res:Response, next:NextFu
     if (!sid) return res.status(403).json({status:'error', data:{error:'Unauthorised.'}})
     try {      
         const result = await UserService.getSessionBySessionId(sid)
+        const user = await UserService.getUser(result.email)
+        
         if (Object.keys(result).length > 0) {
             req.body.id= result.id
             req.body.email=result.email
             req.body.sessionID=sid
+            req.body.user = user
         }
         next()
     }

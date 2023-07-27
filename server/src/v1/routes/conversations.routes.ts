@@ -1,0 +1,15 @@
+import express from 'express'
+import requireAuth from '../../middleware/requireAuth'
+import ConversationController from '../../controllers/conversationController'
+
+const router = express.Router()
+
+router.use(requireAuth)
+router.route("/")
+    .get(ConversationController.getConversations)
+    .post(ConversationController.createConversation)
+
+router.route("/history")
+    .get(ConversationController.getConversationHistory)
+
+export default router

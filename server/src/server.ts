@@ -4,7 +4,7 @@ import contactListRouter from './v1/routes/contactList.routes'
 import notificationRouter from './v1/routes/notification.routes'
 import cors from 'cors'
 import helmet from 'helmet'
-import sessions from 'express-session'
+import conversationRouter from './v1/routes/conversations.routes'
 import dotenv from 'dotenv'
 import { sessionMiddleware } from './middleware/sessionMiddleware'
 
@@ -32,6 +32,7 @@ app.use(helmet())
 app.use(sessionMiddleware)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/contactList', contactListRouter)
+app.use('/api/v1/conversations', conversationRouter)
 app.use('/api/v1/notifications', notificationRouter)
 app.use("*", (req:Request, res:Response) => {
     res.status(404).json({error:'Invalid endpoint url'})

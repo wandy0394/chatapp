@@ -43,7 +43,7 @@ class ContactListController {
                 res.status(200).send({status:'ok', data:userData})
             }
             else {
-                res.status(200).send({status:'error', data:{error:'Could not accept request'}})
+                res.status(500).send({status:'error', data:{error:'Could not accept request'}})
             }
         }
         catch(e) {
