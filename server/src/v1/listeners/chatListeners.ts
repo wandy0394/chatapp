@@ -13,6 +13,8 @@ const chatListener = (socket:Socket) => {
             //TODO: Database reads on every message feels excessive. Optimize this. Caching?
             const conversation = await ConversationService.getConversationByUUID(message.conversationRoomId)
             console.log(`Received message: ${message.content} for room ${message.conversationRoomId} by ${user.username}`)
+            //TODO: get all recipients tied to conversationUUID, pull them into the room 
+
 
             //TODO: sanitise message before broadcasting or storing in db
             if (socket.rooms.has(message.conversationRoomId)) {

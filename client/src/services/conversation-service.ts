@@ -33,6 +33,7 @@ export class ConversationService {
     }
 
 
+
     static async createConversation(addresseeEmail:string) {
         const config:RequestInit = {
             method:'POST',
@@ -40,6 +41,29 @@ export class ConversationService {
             credentials:credentials,
             body: JSON.stringify({
                 addresseeEmail:addresseeEmail,
+            })
+        }
+
+        try {
+            const response = await request<ResponseObject<string>>(`${url}`, config)
+            if (response.status === RESPONSE_TYPE.OK) {
+                return response.data
+            }
+
+        }
+        catch(error) {
+            if (error instanceof RequestError || error instanceof Error) throw (error)
+            throw new Error('Unknown Error')  
+        }        
+    }
+
+    static async leaveConversation(conversationUUID:string) {
+        const config:RequestInit = {
+            method:'DELETE',
+            headers:headers,
+            credentials:credentials,
+            body: JSON.stringify({
+                conversationUUID:conversationUUID,
             })
         }
 

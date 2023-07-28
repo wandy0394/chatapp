@@ -4,7 +4,7 @@ import { useConversationContext } from "./hooks/useConversationContext"
 
 
 export default function ConversationList() {
-    const {conversationList, getConversations, joinRoom} = useConversationContext()
+    const {conversationList, getConversations} = useConversationContext()
 
     const [collapsed, setCollapsed] = useState<boolean>(false)
 
@@ -28,7 +28,6 @@ export default function ConversationList() {
                             <ConversationListItem 
                                 key={conversation.uuid} 
                                 conversation={conversation}
-                                joinRoom={joinRoom}
                             />
                         )
                     })

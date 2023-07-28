@@ -49,31 +49,30 @@ export default class ConversationController {
             else {
                 res.status(500).send({status:'error', data:{error:'Could not create new conversation.'}})
             }
-            // const msg:SystemMessage = {
-            //     content:JSON.stringify({
-            //         uuid:uuid, 
-            //         label:[user.username, addressee.username].join(','),
-            //         memberUUIDs:[user.userUUID, addressee.userUUID].join(',')
-            //     }),
-            //     timestamp: (new Date().toJSON())
-            // }
-
-            //TODO: emit on all sockets associated with userEmail
-            // socket.emit("createPublicConversation", msg)
-            // socket.join(uuid)
-            // const addresseeSockets:string[] = ClientService.getSocketIdsByEmail(addresseeEmail)
-            // for (let i = 0; i < addresseeSockets.length; i++) {
-            //     // io.to(addresseeSockets[i]).emit('conversationInvitation', msg)
-            //     io.sockets.sockets.get(addresseeSockets[i])?.join(uuid)
-            // }
         }
         catch (e) {
             console.error(e)
             res.status(400).send({status:'error', data:{error:'Internal Server Error'}})
         }
+    }
 
 
-
+    static async leaveConversation(req:Request, res:Response, next:NextFunction) {
+        const user = req.body.user
+        const conversationUUID = req.body.conversationUUID
+        if (user === null || user === undefined) {
+            res.status(400).send({status:'error', data:{error:'Bad request: Missing user'}})
+            return
+        }        
+        try {
+            const result = await ConversationService.leaveConversation(user, conversationUUID)
+            if (result) res.status(200).send({status:'ok', data:'success'})
+            else res.status(200).send({status:'ok', data:'fail'})
+        }
+        catch(e) {
+            console.error(e)
+            res.status(500).send({status:'error', data:{error:'Internal Server Error'}})
+        }
     }
 
     static async getConversations(req:Request, res:Response, next:NextFunction) {

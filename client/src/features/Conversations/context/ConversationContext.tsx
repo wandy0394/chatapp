@@ -12,7 +12,8 @@ type ContextType = {
     conversationList:Conversation[],
     setConversationList:React.Dispatch<React.SetStateAction<Conversation[]>>
     getConversations:()=>void,
-    joinRoom: (roomId:string)=>void,
+    joinRoom: (conversationUUID:string)=>void,
+    leaveRoom: (conversationUUID:string) => void
     messages:Message[],
     setMessages:React.Dispatch<React.SetStateAction<Message[]>>
     getConversationHistory:(conversationUUID:string)=>void
@@ -27,6 +28,7 @@ export const ConversationContext = createContext<ContextType>({
     setConversationList:Function.prototype(),
     getConversations: Function.prototype(), 
     joinRoom:Function.prototype(), 
+    leaveRoom:Function.prototype(),
     getConversationHistory:Function.prototype(),
 })
 
@@ -55,11 +57,28 @@ export const ConversationContextProvider = ({children}:any) => {
             })
     }
 
-    function joinRoom(roomId:string) {
+    function joinRoom(conversationUUID:string) {
         if (user === null) return
-        ConversationService.requestJoinRoom(roomId)
+        ConversationService.requestJoinRoom(conversationUUID)
     }
 
+    function leaveRoom(conversationUUID:string) {
+        if (conversationUUID === undefined || conversationUUID === null || conversationUUID === '') return
+        ConversationService.leaveConversation(conversationUUID)
+            .then(response=>{
+                if (response === 'success') {
+                    if (currentConversation?.uuid === conversationUUID) {
+                        setCurrentConversation(null)
+                    }
+                    const newConversationList =[...conversationList].filter(c=>c.uuid !== conversationUUID)
+                    setConversationList(newConversationList)
+                    
+                }
+            })
+            .catch(error=>{
+                console.error(error)
+            })
+    }
     
     const joinRoomListener = (msg:Message) => {
         console.log(msg)
@@ -177,6 +196,7 @@ export const ConversationContextProvider = ({children}:any) => {
                 conversationList,
                 setConversationList,
                 joinRoom,
+                leaveRoom,
                 getConversations,
                 getConversationHistory
             }}

@@ -141,6 +141,19 @@ export class ConversationService {
         }        
     }
 
+    static async leaveConversation(user:User, conversationUUID:string):Promise<boolean> {
+        try {
+            const conversation = await ConversationDAO.getConversationByUUID(conversationUUID)
+            if (conversation.length <= 0) return false
+            const result = await ConversationDAO.updateUserConversationStatus(STATUS.USER_LEFT, conversation[0].id, user.id)
+            return true
+        }
+        catch(e) {
+            console.error(e)
+            throw(e)
+        }
+    }
+
 
     static async getConversationByUUID(conversationUUID:string):Promise<Conversation[]> {
         try {

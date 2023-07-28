@@ -5,16 +5,16 @@ import { Conversation } from "./types"
 
 type Props = {
     conversation:Conversation
-    joinRoom:(roomId:string) => void
 }
 
 export default function ConversationListItem(props:Props) {
-    const {conversation, joinRoom} = props
-    const {getConversationHistory, messages, currentConversation, conversationList, setConversationList} = useConversationContext()
+    const {conversation} = props
+    const {getConversationHistory, conversationList, setConversationList, leaveRoom, joinRoom} = useConversationContext()
     
     const {user} = useAuthContext()
     function handleDeleteClick() {
-
+        console.log('leaving room')
+        if (conversation) leaveRoom(conversation.uuid)
     }
 
 
@@ -48,19 +48,19 @@ export default function ConversationListItem(props:Props) {
 
     return (
         <div 
-            className='group w-full flex items-center justify-between gap-4 rounded p-4 hover:cursor-pointer hover:bg-base-200'
-            onClick={handleClick}
+            className='group w-full flex items-center justify-between rounded'
             
-        >
+            >
            
             <label 
-                className="text-xl flex gap-8 items-baseline justify-center"
+                className="text-xl flex gap-8 items-baseline justify-start p-4 rounded hover:cursor-pointer hover:bg-base-200 h-full w-full"
+                onClick={handleClick}
             >
                 <label>{filterLabel(conversation.label)}</label>
                 <label className={`text-sm bg-info text-black rounded-full px-2 ${conversation.hasUnreadMessages ? 'block' : 'hidden'}`}>NEW</label>
             </label>
             <label 
-                className="text-xl aspect-square w-6 rounded items-center justify-center hidden group-hover:flex group-hover:flex-col hover:bg-error hover:cursor-pointer"
+                className="text-xl aspect-square h-full w-6 rounded items-center justify-center hidden group-hover:flex group-hover:flex-col hover:bg-error hover:cursor-pointer"
                 onClick={()=>handleDeleteClick()}
             >
                 X
