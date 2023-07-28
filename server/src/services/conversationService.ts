@@ -86,15 +86,23 @@ export class ConversationService {
             const addresseeConversationIds = addresseeConversations.map(conv=>conv.id)             
             const commonConversationIds = userConversationIds.filter(conv=>addresseeConversationIds.includes(conv))
             
+            let uuid = uuidv4()
             if (commonConversationIds.length > 0) {
-                console.log('Conversation already exists, aborting')
-                return null
+                //TODO: handle this case
+                console.log('Conversation already exists, re-joining')
+                const conversationUUID = addresseeConversations.find(conv=>conv.id === commonConversationIds[0])?.uuid
+                await ConversationDAO.updateUserConversationStatus(STATUS.USER_JOINED, commonConversationIds[0], addressee.id)
+                if (conversationUUID) uuid = conversationUUID
+                else return null
+            }
+            else {
+                const conversation:Conversation = await ConversationDAO.createConversation(user.email, addressee.username, uuid)
+                await ConversationDAO.addUserToConversation(user.id, conversation.id, STATUS.USER_JOINED)
+                await ConversationDAO.addUserToConversation(addressee.id, conversation.id, STATUS.USER_JOINED)
             }
             
-            const uuid = uuidv4()
-            const conversation:Conversation = await ConversationDAO.createConversation(user.email, addressee.username, uuid)
-            await ConversationDAO.addUserToConversation(user.id, conversation.id, STATUS.USER_JOINED)
-            await ConversationDAO.addUserToConversation(addressee.id, conversation.id, STATUS.USER_JOINED)
+
+
             const userSockets:string[] = ClientService.getSocketIdsByEmail(user.email)
             const addresseeSockets:string[] = ClientService.getSocketIdsByEmail(addresseeEmail)
             
@@ -147,6 +155,7 @@ export class ConversationService {
             if (conversation.length <= 0) return false
             const result = await ConversationDAO.updateUserConversationStatus(STATUS.USER_LEFT, conversation[0].id, user.id)
             return true
+            //TODO: if everyone has left the conversation, delete the rows from table UserConversation, Conversation, and ConversationLine??
         }
         catch(e) {
             console.error(e)
