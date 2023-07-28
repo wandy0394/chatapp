@@ -298,6 +298,48 @@ class ConversationDAO {
         })
         return promise             
     }
+
+
+    static async getUsersInConversationByUUID(conversationUUID:string):Promise<User[]> {
+        const promise = new Promise<User[]>((resolve, reject) =>{
+            try {
+                const sqlQuery = `SELECT
+                                    u.id, u.username, u.userUUID, u.email 
+                                    FROM UserConversations as uc 
+                                    JOIN Users as u
+                                    ON uc.userId = u.id
+                                    JOIN Conversations c
+                                    ON c.id = uc.conversationId
+                                    WHERE c.uuid = ? 
+                                    `
+                db.query(sqlQuery, [conversationUUID], (err, result, fields) => {
+                    if (err) {
+                        console.error(err)
+                        reject (new Error('Error querying database'))
+                    }
+                    else {
+                        const rows = result as RowDataPacket[]
+                        const users:User[] = rows.map(r=> {
+                            return {
+                                username:r.username,
+                                userUUID:r.userUUID,
+                                email:r.email,
+                                id:r.id
+                            }
+
+                        })
+                        resolve(users)
+                    }
+                })
+            }
+            catch (e) {
+                console.error(e)
+                reject(e)
+            }
+        })
+
+        return promise
+    }
 }
 
 export default ConversationDAO

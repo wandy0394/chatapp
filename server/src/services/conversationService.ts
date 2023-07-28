@@ -154,6 +154,17 @@ export class ConversationService {
         }
     }
 
+    static async getUsersInConversationByUUID(conversationUUID:string):Promise<User[]> {
+        try {
+            const users:User[] = await ConversationDAO.getUsersInConversationByUUID(conversationUUID)
+            return users
+        }
+        catch(e) {
+            console.error(e)
+            throw(e)
+        }
+    }
+
 
     static async getConversationByUUID(conversationUUID:string):Promise<Conversation[]> {
         try {
@@ -199,6 +210,16 @@ export class ConversationService {
         }
         catch (e) {
             console.error(e)
+        }
+    }
+
+    static async updateUserConversationStatus(status:string, conversationId:number, userId:number) {
+        try {
+            await ConversationDAO.updateUserConversationStatus(status, conversationId, userId)
+        }
+        catch(e) {
+            console.error(e)
+            throw(e)
         }
     }
 
