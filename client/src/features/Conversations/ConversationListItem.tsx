@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { useAuthContext } from "../Authentication/hooks/useAuthContext"
 
 import { useConversationContext } from "./hooks/useConversationContext"
@@ -20,6 +19,7 @@ export default function ConversationListItem(props:Props) {
 
 
     function handleClick() {
+        if (conversation.uuid === '') return
         getConversationHistory(conversation.uuid)
         joinRoom(conversation.uuid)
         console.log(conversationList)
@@ -29,7 +29,8 @@ export default function ConversationListItem(props:Props) {
                     uuid:conv.uuid,
                     label:conv.label,
                     hasUnreadMessages:false,
-                    memberUUIDs:conv.memberUUIDs
+                    memberUUIDs:conv.memberUUIDs,
+                    memberEmails:conv.memberEmails
                 }
             }
             return conv
@@ -37,9 +38,9 @@ export default function ConversationListItem(props:Props) {
         setConversationList(newConversationList)
     }
 
-    function filterLabel(label:string) {
+    function filterLabel(label:string[]) {
         if (user && label) {
-            const labels:string = label.split(',').filter(l=>l!==user.username).join(',')
+            const labels:string = label.filter(l=>l!==user.username).join(',')
             return labels
         }
         return label

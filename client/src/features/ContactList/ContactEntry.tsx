@@ -2,6 +2,8 @@ import ContactEntryMenu from "./ContactEntryMenu"
 import ContactAgent from "../../services/contact-service"
 import { useContactListContext } from "./hooks/useContactListContext"
 import { useConversationContext } from "../Conversations/hooks/useConversationContext"
+import { Conversation } from "../Conversations/types"
+import { useAuthContext } from "../Authentication/hooks/useAuthContext"
 
 type Props = {
     avatar?:string
@@ -16,7 +18,8 @@ type Props = {
 export default function ContactEntry(props:Props) {
     const {avatar, name, status, email, userUUID} = props
     const {setLoading} = useContactListContext()
-    const {createPublicConversation, conversationList} = useConversationContext()
+    const {conversationList, setConversationList, setCurrentConversation} = useConversationContext()
+    const {user} = useAuthContext()
     function handleChat() {
         for (let i = 0; i < conversationList.length; i++) {
             //only check cases where conversation only has 2 participants. This excludes group chats
@@ -29,7 +32,22 @@ export default function ContactEntry(props:Props) {
             }
         }
         console.log('creating')
-        createPublicConversation(name, email)
+        initializeConversation(email, name, userUUID)
+        // createPublicConversation(name, email)
+    }
+
+    function initializeConversation(addresseeEmail:string, addresseeUsername:string, addresseeUUID:string) {
+        if (user === null || user === undefined) return
+        const conversation:Conversation ={
+            uuid:'',
+            label:[addresseeUsername],
+            hasUnreadMessages:false,
+            memberUUIDs:[addresseeUUID, user?.userUUID],
+            memberEmails:[addresseeEmail, user?.email]
+        }
+        setConversationList(p=>[...p, conversation])
+        setCurrentConversation(conversation)
+
     }
     function handleRemove() {
         ContactAgent.removeContact(email)

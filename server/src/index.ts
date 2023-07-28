@@ -24,8 +24,8 @@ const chatPort = process.env.CHAT_PORT || 3000
 //     UserService.connectionCheck()
 // })
 
-const connection = mysql.createPool(process.env.DATABASE_URL as string)
-connection.on("connection", (connection)=>{
+const pool = mysql.createPool(process.env.DATABASE_URL as string)
+pool.on("connection", (connection)=>{
     console.log('Injecting connection')
     UserService.injectConn(connection)
     ContactListService.injectConn(connection)
@@ -33,9 +33,14 @@ connection.on("connection", (connection)=>{
     UserService.connectionCheck()
 })
 
-connection.getConnection((err, connection)=>{
+pool.getConnection((err, connection)=>{
     if (err) {
+        console.log('An error has occurred')
         console.error(err)
+        pool.getConnection((err, connection)=>{
+            if (err) console.error(`NewError + ${err}`)
+            if (connection) connection.release()
+        })
         //TODO: handle error here
     }
     else {

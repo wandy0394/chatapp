@@ -32,34 +32,28 @@ export class ConversationService {
         socket.off('joinRoom', callback)
     }
 
-    // static getConversationHistory(conversationUUID:string) {
-    //     socket.emit('conversationHistory', conversationUUID)
-    // }
 
-    static listenOnConversationHistory(callback:(msg:Message)=>void) {
-        socket.on('conversationHistory', callback)
-    }
-
-    static removeConversationHistoryListener(callback:(msg:Message)=>void) {
-        socket.off('conversationHistory', callback)
-    }
-
-    static createPublicConversation(label:string, addresseeEmail:string) {
-        const message = JSON.stringify({
-            label:label,
-            addresseeEmail:addresseeEmail
-        })
-        if (socket.connected) {
-            socket.emit('createPublicConversation', message)
+    static async createConversation(addresseeEmail:string) {
+        const config:RequestInit = {
+            method:'POST',
+            headers:headers,
+            credentials:credentials,
+            body: JSON.stringify({
+                addresseeEmail:addresseeEmail,
+            })
         }
-    }
 
-    static listenOnCreatePublicConversation(callback:(msg:Message)=>void):Socket {
-        socket.on('createPublicConversation', callback)
-        return socket
-    }
-    static removeCreatePublicConversationListener(callback:any) {
-        socket.off('createPublicConversation', callback)
+        try {
+            const response = await request<ResponseObject<string>>(`${url}`, config)
+            if (response.status === RESPONSE_TYPE.OK) {
+                return response.data
+            }
+
+        }
+        catch(error) {
+            if (error instanceof RequestError || error instanceof Error) throw (error)
+            throw new Error('Unknown Error')  
+        }        
     }
 
 
@@ -102,5 +96,9 @@ export class ConversationService {
 
     static listenOnConversationInvitation(callback:any) {
         socket.on('conversationInvitation', callback)
+    }
+
+    static removeConversationInvitationLisenter(callback:any) {
+        socket.off('conversationInvitation', callback)
     }
 }

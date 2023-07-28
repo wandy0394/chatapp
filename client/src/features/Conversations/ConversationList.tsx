@@ -4,7 +4,7 @@ import { useConversationContext } from "./hooks/useConversationContext"
 
 
 export default function ConversationList() {
-    const {conversationList, createPublicConversation, getConversations, joinRoom} = useConversationContext()
+    const {conversationList, getConversations, joinRoom} = useConversationContext()
 
     const [collapsed, setCollapsed] = useState<boolean>(false)
 

@@ -18,7 +18,8 @@ export type ClientToServerEvents = {
 }
 
 export type ConversationResponse = {
-    label:string,
+    label:string[],
     uuid:string,
-    memberUUIDs:string[]
+    memberUUIDs:string[],
+    memberEmails:string[]
 }

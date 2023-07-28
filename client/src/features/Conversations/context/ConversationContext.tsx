@@ -8,7 +8,7 @@ import { webSocket } from "../../../services/util/socket"
 
 type ContextType = {
     currentConversation:Conversation | null, 
-    createPublicConversation:(label:string, addresseeEmail:string)=>void, 
+    setCurrentConversation: React.Dispatch<React.SetStateAction<Conversation | null>>
     conversationList:Conversation[],
     setConversationList:React.Dispatch<React.SetStateAction<Conversation[]>>
     getConversations:()=>void,
@@ -22,7 +22,7 @@ export const ConversationContext = createContext<ContextType>({
     messages:[],
     setMessages:Function.prototype(),
     currentConversation: null, 
-    createPublicConversation:Function.prototype(), 
+    setCurrentConversation:Function.prototype(),
     conversationList: [],
     setConversationList:Function.prototype(),
     getConversations: Function.prototype(), 
@@ -60,10 +60,6 @@ export const ConversationContextProvider = ({children}:any) => {
         ConversationService.requestJoinRoom(roomId)
     }
 
-    function createPublicConversation(label:string, addresseeEmail:string) {
-        if (user === null) return
-        ConversationService.createPublicConversation(label, addresseeEmail)
-    }
     
     const joinRoomListener = (msg:Message) => {
         console.log(msg)
@@ -72,23 +68,11 @@ export const ConversationContextProvider = ({children}:any) => {
             uuid:msgData.uuid,
             label:msgData.label,
             hasUnreadMessages:false,
-            memberUUIDs:msgData.memberUUIDs.split(','),
+            memberUUIDs:msgData.memberUUIDs,
+            memberEmails:msgData.memberEmails
         }
         setCurrentConversation(conv)
     }
-
-    const createPublicConversationListener = (msg:Message) => {
-        console.log(msg)
-        const msgContent =JSON.parse(msg.content)
-        const newConversation:Conversation = {
-            uuid:msgContent.uuid,
-            label:msgContent.label,
-            hasUnreadMessages:false,
-            memberUUIDs:msgContent.memberUUIDs.split(',')
-        }
-        setConversationList(prev=>[...prev, newConversation])
-    }
-
 
     function getConversations() {
         ConversationService.getConversations()
@@ -101,7 +85,8 @@ export const ConversationContextProvider = ({children}:any) => {
                         uuid:key.uuid,
                         label:key.label,
                         hasUnreadMessages:false,
-                        memberUUIDs:key.memberUUIDs
+                        memberUUIDs:key.memberUUIDs,
+                        memberEmails:key.memberEmails
                     }
                 })
                 setConversationList(newConversations)
@@ -118,10 +103,38 @@ export const ConversationContextProvider = ({children}:any) => {
             uuid:msgContent.uuid,
             label:msgContent.label,
             hasUnreadMessages:true,
-            memberUUIDs:msgContent.memberUUIDs.split(',')
+            memberUUIDs:msgContent.memberUUIDs,
+            memberEmails:msgContent.memberEmails,
         }
         console.log('Got invitation')
-        setConversationList(prev=>[...prev, newConversation])        
+        let conversationFound:boolean = conversationList.findIndex(c=>c.uuid===msgContent.uuid) > -1
+        if (!conversationFound) setConversationList(prev=>[...prev, newConversation])        
+    }
+
+
+    function handleUnknownMessage(msg:Message) {
+        let conversationFound:boolean = conversationList.findIndex(c=>c.uuid===msg.conversationRoomId) > -1
+        if (conversationFound) {
+            console.log('conversation found')
+            const newConversationList:Conversation[] = conversationList.map(conv => {
+                if (conv.uuid === msg.conversationRoomId) {
+                    return {
+                        uuid:conv.uuid,
+                        label:conv.label,
+                        hasUnreadMessages:true,
+                        memberUUIDs:conv.memberUUIDs,
+                        memberEmails:conv.memberEmails
+                    }
+                }
+                return conv
+            })
+            setConversationList(newConversationList)
+        }
+        else {
+            console.log('conversation not found, requesting')
+            // joinRoom(msg.conversationRoomId)
+            webSocket.emit('conversationInvitation', msg.conversationRoomId)
+        }
     }
 
     const messageListener = (msg:Message) => {
@@ -129,47 +142,30 @@ export const ConversationContextProvider = ({children}:any) => {
             setMessages((state)=>[...state, (msg)])
         }
         else {
-            console.log('new message but not displayed')
-            let conversationFound:boolean = conversationList.findIndex(c=>c.uuid===msg.conversationRoomId) > -1
-            if (conversationFound) {
-                console.log('conversation found')
-                const newConversationList:Conversation[] = conversationList.map(conv => {
-                    if (conv.uuid === msg.conversationRoomId) {
-                        return {
-                            uuid:conv.uuid,
-                            label:conv.label,
-                            hasUnreadMessages:true,
-                            memberUUIDs:conv.memberUUIDs
-                        }
-                    }
-                    return conv
-                })
-                setConversationList(newConversationList)
-            }
-            else {
-                console.log('conversation not found, requesting')
-                // joinRoom(msg.conversationRoomId)
-                webSocket.emit('conversationInvitation', msg.conversationRoomId)
-            }
+            handleUnknownMessage(msg)
         }
     }
 
     useEffect(()=>{
-        if (user === null) return
+        if (user === null || user === undefined) return
         ConversationService.listenOnJoinRoom(joinRoomListener)
-        ConversationService.listenOnCreatePublicConversation(createPublicConversationListener)
         ConversationService.listenOnConversationInvitation(conversationInvitationListener)
         ChatService.listenOnMessage(messageListener)
 
-        getConversations()
         
         return ()=>{
             ConversationService.removeJoinRoomListener(joinRoomListener)
-            ConversationService.removeCreatePublicConversationListener(createPublicConversationListener)
+            ConversationService.removeConversationInvitationLisenter(conversationInvitationListener)
             ChatService.removeMessageListener(messageListener)
 
         }
-    }, [user, currentConversation])
+    }, [user, currentConversation, conversationList])
+
+
+    useEffect(()=>{
+        if (user === null || user === undefined) return
+        getConversations()
+    }, [user])
 
     return (
         <ConversationContext.Provider 
@@ -177,11 +173,11 @@ export const ConversationContextProvider = ({children}:any) => {
                 messages,
                 setMessages,
                 currentConversation,
+                setCurrentConversation,
                 conversationList,
                 setConversationList,
                 joinRoom,
                 getConversations,
-                createPublicConversation,
                 getConversationHistory
             }}
         >
