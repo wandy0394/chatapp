@@ -6,10 +6,12 @@ import ConversationList from "../features/Conversations/ConversationList";
 import { Message } from "../features/ChatMessages/types";
 import { useConversationContext } from "../features/Conversations/hooks/useConversationContext";
 import { useAuthContext } from "../features/Authentication/hooks/useAuthContext";
+import { useEffect, useRef } from "react";
 
 export default function Home() {
-    const {currentConversation, setMessages} = useConversationContext()
+    const {currentConversation, setMessages, messages} = useConversationContext()
     const {user} = useAuthContext()
+    
     function appendMessage(msg:Message) {
         setMessages(state=>[...state, msg])
     }

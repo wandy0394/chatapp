@@ -13,7 +13,7 @@ type ContextType = {
     setConversationList:React.Dispatch<React.SetStateAction<Conversation[]>>
     getConversations:()=>void,
     joinRoom: (conversationUUID:string)=>void,
-    leaveRoom: (conversationUUID:string) => void
+    leaveRoom: (conversation:Conversation) => void
     messages:Message[],
     setMessages:React.Dispatch<React.SetStateAction<Message[]>>
     getConversationHistory:(conversationUUID:string)=>void
@@ -41,6 +41,14 @@ export const ConversationContextProvider = ({children}:any) => {
     const [loading, setLoading] = useState<boolean>(true)
     const {user} = useAuthContext()
 
+    useEffect(()=>{
+        if (currentConversation?.isTemporary) {
+            setMessages([])
+        }
+        else {
+            if (currentConversation) getConversationHistory(currentConversation?.uuid)
+        }
+    }, [currentConversation])
 
     function getConversationHistory(conversationUUID:string) {
         ConversationService.getConversationHistory(conversationUUID)
@@ -59,11 +67,12 @@ export const ConversationContextProvider = ({children}:any) => {
         ConversationService.requestJoinRoom(conversationUUID)
     }
 
-    function leaveRoom(conversationUUID:string) {
+    function leaveRoom(conversation:Conversation) {
+        const conversationUUID = conversation.uuid
         if (conversationUUID === undefined || conversationUUID === null) return
-        if (conversationUUID === '' ) {
-            
-
+        if (conversation.isTemporary) {
+            const newConversationList =[...conversationList].filter(c=>c.uuid !== conversationUUID)
+            setConversationList(newConversationList)
             return
         }
         ConversationService.leaveConversation(conversationUUID)
@@ -90,7 +99,8 @@ export const ConversationContextProvider = ({children}:any) => {
             label:msgData.label,
             hasUnreadMessages:false,
             memberUUIDs:msgData.memberUUIDs,
-            memberEmails:msgData.memberEmails
+            memberEmails:msgData.memberEmails,
+            isTemporary:false
         }
         setCurrentConversation(conv)
     }
@@ -107,7 +117,8 @@ export const ConversationContextProvider = ({children}:any) => {
                         label:key.label,
                         hasUnreadMessages:false,
                         memberUUIDs:key.memberUUIDs,
-                        memberEmails:key.memberEmails
+                        memberEmails:key.memberEmails,
+                        isTemporary:false
                     }
                 })
                 setConversationList(newConversations)
@@ -126,6 +137,7 @@ export const ConversationContextProvider = ({children}:any) => {
             hasUnreadMessages:true,
             memberUUIDs:msgContent.memberUUIDs,
             memberEmails:msgContent.memberEmails,
+            isTemporary:false
         }
         console.log('Got invitation')
         let conversationFound:boolean = conversationList.findIndex(c=>c.uuid===msgContent.uuid) > -1
@@ -144,7 +156,8 @@ export const ConversationContextProvider = ({children}:any) => {
                         label:conv.label,
                         hasUnreadMessages:true,
                         memberUUIDs:conv.memberUUIDs,
-                        memberEmails:conv.memberEmails
+                        memberEmails:conv.memberEmails,
+                        isTemporary:false
                     }
                 }
                 return conv

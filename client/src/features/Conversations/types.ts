@@ -3,5 +3,7 @@ export type Conversation = {
     label:string[],
     hasUnreadMessages:boolean,
     memberUUIDs:string[],
-    memberEmails:string[]
+    memberEmails:string[],
+    isTemporary:boolean
 }
+

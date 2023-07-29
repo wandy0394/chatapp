@@ -18,7 +18,7 @@ export default function ChatInput(props:Props) {
 
 
     function sendMessage(conversationRoomId:string) {
-        if (socket.connected && user && currentConversation) {
+        if (socket.connected && user && currentConversation && messageContent.trim() !== '') {
             let author:User = {
                 username:user.username,
                 email:user.email,
@@ -27,7 +27,7 @@ export default function ChatInput(props:Props) {
 
             let message:Message = {
                 author:author,
-                content:messageContent,
+                content:messageContent.trim(),
                 timestamp:(new Date().toJSON()),
                 conversationRoomId:conversationRoomId
             }
@@ -38,10 +38,10 @@ export default function ChatInput(props:Props) {
     }
 
     function handleSendMessage() {
-        if (socket.connected && user && currentConversation && currentConversation.uuid !== '') {
+        if (socket.connected && user && currentConversation && !currentConversation.isTemporary) {
             sendMessage(currentConversation.uuid)
         }
-        else if (user && currentConversation && currentConversation.uuid === '') {
+        else if (user && currentConversation && currentConversation.isTemporary) {
             console.log('Creating new conversation')
             const addresseeEmail = currentConversation.memberEmails.find(u=>u!==user.email)
             if (addresseeEmail) {
@@ -51,7 +51,6 @@ export default function ChatInput(props:Props) {
                                 const newConversation:Conversation = {...currentConversation, uuid:response}
                                 sendMessage(response)
                                 setCurrentConversation(newConversation)
-
                             }
                         })
                         .catch(error=>{
@@ -69,7 +68,7 @@ export default function ChatInput(props:Props) {
         <div className='w-full h-full grid grid-cols-[4fr_1fr] gap-4 py-4'>
             <textarea className='textarea textarea-bordered resize-none text-xl' onChange={(e:ChangeEvent<HTMLTextAreaElement>)=>handleMessageChange(e)} value={messageContent}/>
             <div 
-                className={`h-full ${currentConversation === null ? 'bg-gray-400 font-bold text-white rounded flex items-center justify-center cursor-not-allowed' : 'btn btn-sm btn-primary'}`} 
+                className={`h-full ${(currentConversation === null || messageContent.trim() === '') ? 'bg-gray-400 font-bold text-white rounded flex items-center justify-center cursor-not-allowed' : 'btn btn-sm btn-primary'}`} 
                 onClick={handleSendMessage}
             >
                 <IoMdSend className='w-1/4 h-1/4'/>

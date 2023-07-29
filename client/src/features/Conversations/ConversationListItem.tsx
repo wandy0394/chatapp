@@ -9,33 +9,38 @@ type Props = {
 
 export default function ConversationListItem(props:Props) {
     const {conversation} = props
-    const {getConversationHistory, conversationList, setConversationList, leaveRoom, joinRoom} = useConversationContext()
+    const {getConversationHistory, setCurrentConversation, currentConversation, conversationList, setConversationList, leaveRoom, joinRoom} = useConversationContext()
     
     const {user} = useAuthContext()
     function handleDeleteClick() {
         console.log('leaving room')
-        if (conversation) leaveRoom(conversation.uuid)
+        if (conversation) leaveRoom(conversation)
     }
 
 
     function handleClick() {
-        if (conversation.uuid === '') return
-        getConversationHistory(conversation.uuid)
-        joinRoom(conversation.uuid)
-        console.log(conversationList)
-        const newConversationList:Conversation[] = conversationList.map(conv => {
-            if (conv.uuid === conversation.uuid) {
-                return {
-                    uuid:conv.uuid,
-                    label:conv.label,
-                    hasUnreadMessages:false,
-                    memberUUIDs:conv.memberUUIDs,
-                    memberEmails:conv.memberEmails
+        if (!conversation.isTemporary) {
+            // getConversationHistory(conversation.uuid)
+            joinRoom(conversation.uuid)
+            console.log(conversationList)
+            const newConversationList:Conversation[] = conversationList.map(conv => {
+                if (conv.uuid === conversation.uuid) {
+                    return {
+                        uuid:conv.uuid,
+                        label:conv.label,
+                        hasUnreadMessages:false,
+                        memberUUIDs:conv.memberUUIDs,
+                        memberEmails:conv.memberEmails,
+                        isTemporary:conv.isTemporary
+                    }
                 }
-            }
-            return conv
-        })
-        setConversationList(newConversationList)
+                return conv
+            })
+            setConversationList(newConversationList)
+        }
+        else {
+            setCurrentConversation(conversation)
+        }
     }
 
     function filterLabel(label:string[]) {
@@ -48,7 +53,7 @@ export default function ConversationListItem(props:Props) {
 
     return (
         <div 
-            className='group w-full flex items-center justify-between rounded'    
+            className={`group w-full flex items-center justify-between rounded ${currentConversation?.uuid === conversation.uuid && 'bg-primary-focus'}`}    
         >
            
             <label 
