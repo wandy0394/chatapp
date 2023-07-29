@@ -12,13 +12,15 @@ export default function Header() {
       <div className='bg-primary h-16 w-full flex items-center justify-between px-4'>
         <div>
             <Link className='text-3xl' to="/">
-                CHAT
+                CHITCHAT
             </Link>
         </div>
         <div>
           {
             user &&
-              <span className='text-xl'>Hello <span className="text-3xl font-bold">{user.username}</span></span>
+              <span className='text-xl'>
+                Hello <span className="text-3xl font-bold">{user.username}</span>
+              </span>
           }
         </div>
         <div className='flex items-center justify-between gap-4'>

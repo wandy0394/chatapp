@@ -199,7 +199,7 @@ export class ConversationService {
                 socket.emit('joinRoom', {
                     content:JSON.stringify({
                         uuid:conversationUUID, 
-                        label:conversation[0].label,
+                        label:users.map(u=>u.username),
                         memberUUIDs:users.map(u=>u.userUUID),
                         memberEmails:users.map(u=>u.email)
                     }),

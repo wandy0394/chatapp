@@ -33,6 +33,8 @@ pool.on("connection", (connection)=>{
     UserService.connectionCheck()
 })
 
+
+
 pool.getConnection((err, connection)=>{
     if (err) {
         console.log('An error has occurred')

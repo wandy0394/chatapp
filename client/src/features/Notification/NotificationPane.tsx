@@ -9,9 +9,9 @@ export default function NotificationPane() {
 
     return (
         <div className='w-full flex flex-col items-center justify-start'>
-            <div className="px-4 py-2 w-full flex justify-between items-center gap-4 bg-base-300" >
+            <div className="px-4 w-full flex justify-between items-center gap-4 bg-base-300" >
                 <span 
-                    className='text-2xl font-medium w-full h-full flex flex-col justify-center' 
+                    className='text-2xl font-medium w-full h-16 flex flex-col justify-center' 
                 >
                     Notifications
                 </span>

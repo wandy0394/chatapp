@@ -6,7 +6,7 @@ import { Message } from "../ChatMessages/types"
 import { useConversationContext } from "../Conversations/hooks/useConversationContext"
 import { ConversationService } from "../../services/conversation-service"
 import { Conversation } from "../Conversations/types"
-
+import {IoMdSend} from 'react-icons/io'
 type Props ={
     appendMessage:(message:Message) => void
 }
@@ -68,7 +68,12 @@ export default function ChatInput(props:Props) {
     return (
         <div className='w-full h-full grid grid-cols-[4fr_1fr] gap-4 py-4'>
             <textarea className='textarea textarea-bordered resize-none text-xl' onChange={(e:ChangeEvent<HTMLTextAreaElement>)=>handleMessageChange(e)} value={messageContent}/>
-            <div className='btn btn-sm btn-primary h-full' onClick={handleSendMessage}>Send</div>
+            <div 
+                className={`h-full ${currentConversation === null ? 'bg-gray-400 font-bold text-white rounded flex items-center justify-center cursor-not-allowed' : 'btn btn-sm btn-primary'}`} 
+                onClick={handleSendMessage}
+            >
+                <IoMdSend className='w-1/4 h-1/4'/>
+            </div>
         </div>
     )
 }

@@ -41,9 +41,6 @@ export const ConversationContextProvider = ({children}:any) => {
     const [loading, setLoading] = useState<boolean>(true)
     const {user} = useAuthContext()
 
-    useEffect(()=>{
-        console.log(currentConversation)
-    }, [currentConversation])
 
     function getConversationHistory(conversationUUID:string) {
         ConversationService.getConversationHistory(conversationUUID)
@@ -63,7 +60,12 @@ export const ConversationContextProvider = ({children}:any) => {
     }
 
     function leaveRoom(conversationUUID:string) {
-        if (conversationUUID === undefined || conversationUUID === null || conversationUUID === '') return
+        if (conversationUUID === undefined || conversationUUID === null) return
+        if (conversationUUID === '' ) {
+            
+
+            return
+        }
         ConversationService.leaveConversation(conversationUUID)
             .then(response=>{
                 if (response === 'success') {
