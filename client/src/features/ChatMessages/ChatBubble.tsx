@@ -9,6 +9,13 @@ type Props = {
     isSelf:boolean
 }
 
+
+function formatTimestamp(timestamp:string) {
+    const hours = timestamp.split('T')[1].split('.')[0].split(':')[0] 
+    const min = timestamp.split('T')[1].split('.')[0].split(':')[1] 
+    return hours + ':' + min
+}
+
 export default function ChatBubble(props:Props) {
     const {img, author, timestamp, content, status, isSelf} = props
     return (
@@ -28,7 +35,7 @@ export default function ChatBubble(props:Props) {
             </div>
             <div className={`chat-header flex items-center gap-2`}>
                 {author.username}
-                <time className="text-xs opacity-50">{timestamp}</time>
+                <time className="text-xs opacity-50">{formatTimestamp(timestamp)}</time>
             </div>
             <div className={`chat-bubble ${isSelf?'bg-primary':'bg-secondary'}`}>{content}</div>
             <div className="chat-footer opacity-50">
